@@ -14,7 +14,7 @@ registerBlock<'caseStudy'>({
   defaultData: (): CaseStudyData => ({
     title: '프로젝트 이름',
     period: '2024.03 — 2024.06',
-    stack: 'React · TypeScript',
+    stack: 'React, TypeScript',
     role: 'Solo · Full-stack',
     context:
       '팀에서 ==월 평균 50건==의 경비 신청이 종이 양식으로 처리되어 승인까지 평균 ==3일==이 걸렸습니다.',

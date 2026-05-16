@@ -37,11 +37,11 @@ export function CaseStudyForm({
           mono
         />
       </Field>
-      <Field label="스택">
+      <Field label="스택" hint="쉼표(,)로 구분해서 적으면 · 로 표시돼요">
         <TextInput
           value={d.stack}
           onChange={(v) => update({ stack: v })}
-          placeholder="React · TypeScript · Supabase"
+          placeholder="React, TypeScript, Supabase"
           mono
         />
       </Field>

@@ -1,4 +1,5 @@
 import { rt } from '../../rich-text/parse';
+import { formatStack } from '../../lib/formatStack';
 import type { CareerData, Project, PAR } from './types';
 
 function PARView({ par }: { par: PAR }) {
@@ -27,7 +28,7 @@ function ProjectView({ project }: { project: Project }) {
         <div className="rs-project-title">{title}</div>
         {period && <div className="rs-section-meta rs-project-period">{period}</div>}
       </div>
-      {stack && <div className="rs-stack rs-project-stack">{stack}</div>}
+      {stack && <div className="rs-stack rs-project-stack">{formatStack(stack)}</div>}
       {pars.length > 0 && (
         <div className="rs-project-pars">
           {pars.map((par) => (

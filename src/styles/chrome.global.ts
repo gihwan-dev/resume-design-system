@@ -138,6 +138,47 @@ export const chromeGlobalStyles = css`
     color: var(--text-faint);
   }
 
+  .save-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--text-faint);
+    padding: 0 6px;
+    user-select: none;
+  }
+  .save-indicator .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    display: inline-block;
+  }
+  .save-indicator.is-saving {
+    color: var(--text-muted);
+  }
+  .save-indicator.is-saving .dot {
+    background: var(--text-muted);
+    animation: rds-save-pulse 1s ease-in-out infinite;
+  }
+  .save-indicator.is-saved {
+    color: var(--chrome-success);
+  }
+  .save-indicator.is-error {
+    color: var(--chrome-danger);
+  }
+  @keyframes rds-save-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
   .resume-picker {
     display: inline-flex;
     align-items: center;

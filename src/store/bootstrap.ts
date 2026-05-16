@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore, getStateSnapshot } from './store';
 import { loadState, saveState } from './persistence';
+import { useSaveStatus } from './saveStatus';
 import { seedAppState } from '../seed/sampleResume';
 import { debounce } from '../lib/debounce';
 
 /**
  * Bootstrap hook — loads persisted state once on mount, then
- * persists every store change (debounced 250ms).
+ * persists every store change (debounced 250ms). Emits saving/saved
+ * lifecycle events to saveStatus so the Topbar indicator can prove
+ * the autosave is alive without prompting users to take snapshots.
  */
 export function useBootstrap(): { ready: boolean } {
   const [ready, setReady] = useState(false);
@@ -22,6 +25,9 @@ export function useBootstrap(): { ready: boolean } {
       } else {
         useStore.getState().actions.loadState(seedAppState());
       }
+      // First snapshot of the boot — treat as "already saved" so the
+      // indicator doesn't sit at "저장 중…" forever before any edits happen.
+      useSaveStatus.getState().markSaved();
       setReady(true);
     })();
     return () => {
@@ -31,10 +37,16 @@ export function useBootstrap(): { ready: boolean } {
 
   useEffect(() => {
     if (!ready) return;
-    debouncedRef.current = debounce((snapshot) => {
-      void saveState(snapshot);
+    debouncedRef.current = debounce(async (snapshot) => {
+      try {
+        await saveState(snapshot);
+        useSaveStatus.getState().markSaved();
+      } catch {
+        useSaveStatus.getState().markError();
+      }
     }, 250);
     const unsub = useStore.subscribe(() => {
+      useSaveStatus.getState().markSaving();
       debouncedRef.current?.(getStateSnapshot());
     });
     return () => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useActions, useCurrentResume, useStore } from '../store/store';
 import { printResume } from '../pdf/printResume';
+import { SaveIndicator } from './SaveIndicator';
 
 function ClickAway({ onClose, children }: { onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -243,6 +244,7 @@ export function Topbar({
       <div className="topbar-section">
         <div className="topbar-brand">RESUME DS</div>
         <ResumePicker />
+        <SaveIndicator />
       </div>
       <div className="topbar-section">
         <SnapshotsButton />

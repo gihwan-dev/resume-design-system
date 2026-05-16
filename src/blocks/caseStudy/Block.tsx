@@ -1,4 +1,5 @@
 import { rt } from '../../rich-text/parse';
+import { formatStack } from '../../lib/formatStack';
 import type { CaseStudyData } from './types';
 
 /**
@@ -20,7 +21,7 @@ export function CaseStudyBlock({ data }: { data: CaseStudyData }) {
         <div className="rs-stack rs-project-stack">
           {role && <span>{role}</span>}
           {role && stack && <span style={{ margin: '0 6px', color: 'var(--text-faint)' }}>·</span>}
-          {stack && <span>{stack}</span>}
+          {stack && <span>{formatStack(stack)}</span>}
         </div>
       )}
 

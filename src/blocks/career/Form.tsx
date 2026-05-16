@@ -112,11 +112,11 @@ export function CareerForm({
               mono
             />
           </Field>
-          <Field label="스택">
+          <Field label="스택" hint="쉼표(,)로 구분해서 적으면 · 로 표시돼요">
             <TextInput
               value={prj.stack}
               onChange={(v) => patchProject(prj.id, { stack: v })}
-              placeholder="React · TypeScript"
+              placeholder="React, TypeScript, Vite"
               mono
             />
           </Field>

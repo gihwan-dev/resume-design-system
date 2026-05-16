@@ -44,33 +44,26 @@ export function seedAppState(): AppState {
       ],
     }),
     b('sectionHeader', { title: 'Career', meta: '', variant: 'primary' }),
-    b('career', {
+    b('careerHeader', {
       company: '주식회사 예시컴퍼니',
       role: 'Frontend Engineer',
       period: '2024.01 — 현재',
       summary:
         '제품군의 React 대시보드, 공용 데이터 그리드, 디자인 시스템을 개발하며 상태 모델·렌더링 경계·테스트 기준으로 구조를 정리합니다.',
-      projects: [
-        {
-          id: uid('prj'),
-          title: '운영 대시보드 React 19 마이그레이션',
-          period: '2025.02 — 2025.05',
-          stack: 'React 19 · TanStack Query · Zustand · Vite',
-          pars: [
-            {
-              id: uid('par'),
-              label: '',
-              problem:
-                'CRA 기반 5개 제품에서 빌드 시간 ==평균 90s==, 신규 기능 추가 시 회귀 빈도 높음.',
-              action:
-                'Vite 전환 + 공용 데이터 그리드 추출 + 상태 모델을 `Zustand + Immer` 슬라이스로 정리.',
-              result: '빌드 시간 ==90s → 12s==, 첫 페인트 ==1.8s → 0.7s==, 회귀 PR 4건 → 0건.',
-              learning:
-                '대규모 리팩토링은 “스토어 모양”을 먼저 합의해야 화면 코드가 따라 단순해진다.',
-            },
-          ],
-        },
-      ],
+    }),
+    b('careerProject', {
+      title: '운영 대시보드 React 19 마이그레이션',
+      period: '2025.02 — 2025.05',
+      stack: 'React 19, TanStack Query, Zustand, Vite',
+    }),
+    b('par', {
+      label: '',
+      problem:
+        'CRA 기반 5개 제품에서 빌드 시간 ==평균 90s==, 신규 기능 추가 시 회귀 빈도 높음.',
+      action:
+        'Vite 전환 + 공용 데이터 그리드 추출 + 상태 모델을 `Zustand + Immer` 슬라이스로 정리.',
+      result: '빌드 시간 ==90s → 12s==, 첫 페인트 ==1.8s → 0.7s==, 회귀 PR 4건 → 0건.',
+      learning: '대규모 리팩토링은 "스토어 모양"을 먼저 합의해야 화면 코드가 따라 단순해진다.',
     }),
   ]);
 

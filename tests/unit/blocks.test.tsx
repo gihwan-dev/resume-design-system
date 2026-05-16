@@ -8,8 +8,11 @@ const ALL_TYPES = [
   'positioning',
   'sectionHeader',
   'coreImpact',
-  'career',
-  'caseStudy',
+  'careerHeader',
+  'careerProject',
+  'par',
+  'caseStudyHeader',
+  'caseStudyOutcome',
   'skills',
   'learningNote',
   'education',
@@ -56,8 +59,8 @@ describe('block registry', () => {
     }
   });
 
-  it('caseStudy links chip absorbs pre-migration { label, href } as alias', () => {
-    const def = getBlock('caseStudy');
+  it('caseStudyHeader links chip absorbs pre-migration { label, href } as alias', () => {
+    const def = getBlock('caseStudyHeader');
     expect(def).toBeDefined();
     if (!def) return;
     const Render = def.Render;
@@ -69,9 +72,6 @@ describe('block registry', () => {
           stack: '',
           role: '',
           context: '',
-          built: '',
-          outcome: '',
-          learning: '',
           links: [{ href: 'https://demo.app', label: 'DEMO' }],
         }}
       />,

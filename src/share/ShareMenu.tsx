@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useActions, useCurrentResume } from '../store/store';
-import {
-  deserializeResumeExport,
-  serializeResume,
-  type ResumeExportV1,
-} from './exportFormat';
+import { deserializeResumeExport, serializeResume, type ResumeExportV1 } from './exportFormat';
 import { buildShareUrl, encodeShareData } from './shareCodec';
 import { copyText, readText } from './clipboard';
 
@@ -207,8 +203,8 @@ function PasteJsonModal({
           {error && <div className="share-modal-error">{error}</div>}
           {preview && (
             <div className="share-modal-preview">
-              가져올 이력서: <b>{preview.name}</b> · {preview.pages.length}페이지 ·{' '}
-              {totalBlocks}블록
+              가져올 이력서: <b>{preview.name}</b> · {preview.pages.length}페이지 · {totalBlocks}
+              블록
             </div>
           )}
         </div>

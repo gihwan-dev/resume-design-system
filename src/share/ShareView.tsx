@@ -30,8 +30,8 @@ export function ShareView({ token }: { token: string }) {
           <div className="share-error-card">
             <h2>공유 데이터를 읽을 수 없어요</h2>
             <p>
-              링크가 메신저에서 잘렸거나, 일부 문자가 손상됐을 수 있어요. 보낸 사람에게
-              다시 받아주세요.
+              링크가 메신저에서 잘렸거나, 일부 문자가 손상됐을 수 있어요. 보낸 사람에게 다시
+              받아주세요.
             </p>
           </div>
         </div>

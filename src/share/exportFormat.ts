@@ -22,9 +22,7 @@ export function serializeResume(resume: Resume): ResumeExportV1 {
   };
 }
 
-type DeserializeResult =
-  | { ok: true; data: ResumeExportV1 }
-  | { ok: false; error: string };
+type DeserializeResult = { ok: true; data: ResumeExportV1 } | { ok: false; error: string };
 
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null && !Array.isArray(x);

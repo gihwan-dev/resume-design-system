@@ -181,9 +181,7 @@ export const useStore = create<Store>()(
           const resume = importAsNewResume(data);
           // 같은 이름이 이미 있으면 충돌 회피용 접미사. 비교는 trim 기준.
           const trimmed = resume.name.trim();
-          const existingNames = new Set(
-            Object.values(s.resumes).map((r) => r.name.trim()),
-          );
+          const existingNames = new Set(Object.values(s.resumes).map((r) => r.name.trim()));
           if (existingNames.has(trimmed)) {
             resume.name = `${trimmed} (가져옴)`;
           }

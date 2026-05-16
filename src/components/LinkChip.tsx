@@ -30,13 +30,7 @@ export function LinkChip({ href, alias }: { href: string; alias?: string }) {
   const [failed, setFailed] = useState(false);
 
   return (
-    <a
-      className="rs-link-chip"
-      href={href || '#'}
-      target="_blank"
-      rel="noreferrer"
-      title={href}
-    >
+    <a className="rs-link-chip" href={href || '#'} target="_blank" rel="noreferrer" title={href}>
       {src && !failed ? (
         <img
           className="rs-link-chip-icon"

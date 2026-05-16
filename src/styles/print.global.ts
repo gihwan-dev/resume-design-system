@@ -3,12 +3,13 @@ import { css } from '@emotion/react';
 /**
  * Print-time overrides — the PDF "parity" CSS.
  *
- * Strategy: the canvas's `.rs-page` is already the exact A4 box.
- * For print we:
- *   - hide builder chrome (anything not inside `.rs-page`)
- *   - lift muted/faint greys a notch (PDF flattening)
- *   - enforce strict 1-page-per-`.rs-page` with no overflow
- *   - strip filters & shadows
+ * Why so many display/overflow resets:
+ *   The on-screen builder uses flexbox + overflow:auto on the wrappers
+ *   that contain the resume pages. Browsers reliably break `page-break-after`
+ *   inside flex containers or inside scroll containers — that's why a
+ *   naive print emitted only the first page. We collapse every ancestor of
+ *   `.rs-page` to plain block + visible overflow at print time so each
+ *   `.rs-page` is a direct, flow-level child for the paginator.
  */
 export const printGlobalStyles = css`
   @page {
@@ -22,6 +23,8 @@ export const printGlobalStyles = css`
       background: #fff;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     :root {
@@ -34,19 +37,28 @@ export const printGlobalStyles = css`
     body[data-preview='print'] .app-chrome {
       display: none !important;
     }
-    body[data-preview='print'] .canvas-wrap {
-      background: #fff !important;
-      padding: 0 !important;
-      overflow: visible !important;
-    }
-    body[data-preview='print'] .canvas-inner {
-      gap: 0 !important;
-      padding: 0 !important;
-    }
+
+    /* Flatten every ancestor of .rs-page into plain block flow so the
+       browser paginator can apply page-break rules to each page. */
+    body[data-preview='print'] #root,
+    body[data-preview='print'] .app,
+    body[data-preview='print'] .app-body,
+    body[data-preview='print'] .canvas-wrap,
+    body[data-preview='print'] .canvas-inner,
     body[data-preview='print'] .canvas-page {
-      box-shadow: none !important;
+      display: block !important;
+      height: auto !important;
+      max-height: none !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      padding: 0 !important;
       margin: 0 !important;
+      gap: 0 !important;
+      background: #fff !important;
+      flex: none !important;
+      width: auto !important;
     }
+
     body[data-preview='print'] .bb-wrap {
       outline: 0 !important;
     }
@@ -54,7 +66,9 @@ export const printGlobalStyles = css`
     body[data-preview='print'] .canvas-page-tag,
     body[data-preview='print'] .canvas-page-actions,
     body[data-preview='print'] .canvas-add-page,
-    body[data-preview='print'] .canvas-overflow {
+    body[data-preview='print'] .canvas-overflow,
+    body[data-preview='print'] .canvas-overflow-banner,
+    body[data-preview='print'] .bb-actions {
       display: none !important;
     }
 
@@ -67,9 +81,11 @@ export const printGlobalStyles = css`
       page-break-after: always;
       break-after: page;
       overflow: hidden;
+      outline: 0 !important;
     }
     .rs-page:last-of-type {
       page-break-after: auto;
+      break-after: auto;
     }
 
     * {

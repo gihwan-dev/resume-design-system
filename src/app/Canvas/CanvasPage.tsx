@@ -70,11 +70,22 @@ export function CanvasPage({
     setDroppableRef(el);
   };
 
+  const hasOverflow = overflowY != null;
+
   return (
-    <div className="canvas-page" style={{ position: 'relative' }}>
+    <div
+      className={'canvas-page' + (hasOverflow ? ' is-overflow' : '')}
+      style={{ position: 'relative' }}
+    >
       <div className="canvas-page-tag" data-print="hide">
         Page {String(pageIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </div>
+      {hasOverflow && (
+        <div className="canvas-overflow-banner" data-print="hide">
+          <span className="dot" />
+          A4 초과 — PDF에서 잘립니다
+        </div>
+      )}
       <div className="canvas-page-actions" data-print="hide">
         <button
           className="btn btn-ghost btn-icon"
@@ -154,9 +165,9 @@ export function CanvasPage({
           )}
         </div>
 
-        {overflowY != null && (
-          <div className="canvas-overflow" data-print="hide" style={{ top: overflowY }}>
-            <div className="co-label">overflow — split to next page</div>
+        {hasOverflow && (
+          <div className="canvas-overflow" data-print="hide" style={{ top: overflowY ?? 0 }}>
+            <div className="co-label">A4 경계 — 새 페이지로 분할하세요</div>
           </div>
         )}
       </article>

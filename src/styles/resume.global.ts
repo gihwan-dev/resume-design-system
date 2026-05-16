@@ -133,7 +133,10 @@ export const resumeGlobalStyles = css`
   }
   .rs-page {
     width: var(--a4-width);
-    min-height: var(--a4-height);
+    /* Fixed A4 height on-screen so the page boundary is unambiguous. Content
+       that overflows still flows visually (so it stays editable), but the
+       canvas wrapper paints a red outline + banner so the user sees the cut. */
+    height: var(--a4-height);
     padding: var(--a4-pad-y) var(--a4-pad-x);
     background: var(--bg-page);
     color: var(--text-primary);
@@ -144,6 +147,7 @@ export const resumeGlobalStyles = css`
     margin: 0 auto;
     position: relative;
     padding-bottom: max(var(--a4-pad-y), 14mm);
+    overflow: visible;
   }
   .rs-page.rs-density-compact {
     --gap-section: 18px;

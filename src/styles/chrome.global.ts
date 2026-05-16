@@ -451,6 +451,7 @@ export const chromeGlobalStyles = css`
     right: 0;
     border-top: 1.5px dashed var(--chrome-danger);
     pointer-events: none;
+    z-index: 1;
   }
   .canvas-overflow .co-label {
     position: absolute;
@@ -464,6 +465,35 @@ export const chromeGlobalStyles = css`
     border-radius: 3px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+  .canvas-page.is-overflow .rs-page {
+    outline: 2px solid var(--chrome-danger);
+    outline-offset: -2px;
+  }
+  .canvas-overflow-banner {
+    position: absolute;
+    top: -22px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--chrome-danger);
+    padding: 3px 8px;
+    border-radius: 3px;
+    z-index: 5;
+    white-space: nowrap;
+  }
+  .canvas-overflow-banner .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.9;
   }
   .rs-page.is-drop-target {
     outline: 2px dashed var(--accent-primary);

@@ -3,42 +3,31 @@ import { render } from '@testing-library/react';
 import { getBlock } from '../../src/blocks';
 import '../../src/blocks';
 
+const ALL_TYPES = [
+  'header',
+  'positioning',
+  'sectionHeader',
+  'coreImpact',
+  'career',
+  'caseStudy',
+  'skills',
+  'learningNote',
+  'education',
+  'linkRow',
+  'freeText',
+  'divider',
+  'spacer',
+];
+
 describe('block registry', () => {
-  it('registers all 12 block types', () => {
-    for (const t of [
-      'header',
-      'positioning',
-      'sectionHeader',
-      'coreImpact',
-      'career',
-      'skills',
-      'learningNote',
-      'education',
-      'linkRow',
-      'freeText',
-      'divider',
-      'spacer',
-    ]) {
+  it('registers every declared block type', () => {
+    for (const t of ALL_TYPES) {
       expect(getBlock(t)).toBeDefined();
     }
   });
 
   it('every block has a default data factory and renderable JSX', () => {
-    const types = [
-      'header',
-      'positioning',
-      'sectionHeader',
-      'coreImpact',
-      'career',
-      'skills',
-      'learningNote',
-      'education',
-      'linkRow',
-      'freeText',
-      'divider',
-      'spacer',
-    ];
-    for (const t of types) {
+    for (const t of ALL_TYPES) {
       const def = getBlock(t);
       expect(def).toBeDefined();
       if (!def) continue;

@@ -12,6 +12,7 @@ import './positioning';
 import './sectionHeader';
 import './coreImpact';
 import './career';
+import './caseStudy';
 import './skills';
 import './learningNote';
 import './education';

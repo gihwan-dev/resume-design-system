@@ -86,7 +86,8 @@ export function importAsNewResume(data: ResumeExportV1): Resume {
       cloned.id = uid('b');
       // Re-issue nested ids known to the career block so duplicate/edit flows
       // stay stable on the imported copy.
-      if (cloned.type === 'career') {
+      const blockType: string = cloned.type;
+      if (blockType === 'career') {
         const cd = cloned.data as {
           projects?: { id?: string; pars?: { id?: string }[] }[];
         };

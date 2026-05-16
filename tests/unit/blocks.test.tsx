@@ -37,4 +37,23 @@ describe('block registry', () => {
       expect(container.firstChild).toBeTruthy();
     }
   });
+
+  it('passes newlines through to the DOM text content so CSS pre-line can render them', () => {
+    // The .rs-intro / .rs-body / .rs-bullet / .rs-learning rules use
+    // `white-space: pre-line`, which only takes effect if the DOM actually
+    // contains the \n character. This is the contract we lock in here.
+    const positioning = getBlock('positioning');
+    expect(positioning).toBeDefined();
+    if (!positioning) return;
+    const Render = positioning.Render;
+    const { container } = render(<Render data={{ text: '첫째 줄\n둘째 줄' }} />);
+    expect(container.textContent).toContain('첫째 줄\n둘째 줄');
+
+    const freeText = getBlock('freeText');
+    if (freeText) {
+      const FT = freeText.Render;
+      const out = render(<FT data={{ text: 'line1\nline2' }} />);
+      expect(out.container.textContent).toContain('line1\nline2');
+    }
+  });
 });

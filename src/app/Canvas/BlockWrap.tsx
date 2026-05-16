@@ -6,16 +6,20 @@ export function BlockWrap({
   blockId,
   blockType,
   hostRef,
+  canUp,
+  canDown,
   children,
 }: {
   blockId: string;
   blockType: string;
   hostRef: RefCallback<HTMLDivElement>;
+  canUp: boolean;
+  canDown: boolean;
   children: ReactNode;
 }) {
   const selected = useStore((s) => s.selectedBlockId === blockId);
   const [hover, setHover] = useState(false);
-  const { selectBlock } = useActions();
+  const { selectBlock, moveBlockBy } = useActions();
   const def = getBlock(blockType);
   return (
     <div
@@ -31,6 +35,24 @@ export function BlockWrap({
     >
       <div className="bb-label" data-print="hide">
         {def?.label ?? blockType}
+      </div>
+      <div className="bb-actions" data-print="hide" onClick={(e) => e.stopPropagation()}>
+        <button
+          className="bb-action"
+          title="위로"
+          disabled={!canUp}
+          onClick={() => moveBlockBy(blockId, -1)}
+        >
+          ↑
+        </button>
+        <button
+          className="bb-action"
+          title="아래로"
+          disabled={!canDown}
+          onClick={() => moveBlockBy(blockId, 1)}
+        >
+          ↓
+        </button>
       </div>
       {children}
     </div>

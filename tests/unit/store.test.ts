@@ -96,6 +96,30 @@ describe('store — pages & blocks', () => {
       true,
     );
   });
+
+  it('reorders blocks within a page via moveBlockBy(±1)', () => {
+    const s = useStore.getState();
+    const page = s.resumes[s.currentResumeId]!.pages[0]!;
+    const first = page.blocks[0]!;
+    const second = page.blocks[1]!;
+    s.actions.moveBlockBy(first.id, 1);
+    const after = useStore.getState().resumes[useStore.getState().currentResumeId]!.pages[0]!;
+    expect(after.blocks[0]!.id).toBe(second.id);
+    expect(after.blocks[1]!.id).toBe(first.id);
+    useStore.getState().actions.moveBlockBy(first.id, -1);
+    const back = useStore.getState().resumes[useStore.getState().currentResumeId]!.pages[0]!;
+    expect(back.blocks[0]!.id).toBe(first.id);
+  });
+
+  it('moves a block across page boundaries via moveBlockBy', () => {
+    const s = useStore.getState();
+    const r = s.resumes[s.currentResumeId]!;
+    const page0 = r.pages[0]!;
+    const lastBlockOfPage0 = page0.blocks[page0.blocks.length - 1]!;
+    s.actions.moveBlockBy(lastBlockOfPage0.id, 1);
+    const after = useStore.getState().resumes[useStore.getState().currentResumeId]!;
+    expect(after.pages[1]!.blocks[0]!.id).toBe(lastBlockOfPage0.id);
+  });
 });
 
 describe('store — snapshots', () => {

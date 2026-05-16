@@ -39,6 +39,7 @@ export const resumeGlobalStyles = css`
     color: var(--text-primary);
     letter-spacing: var(--tr-tight);
     word-break: keep-all;
+    white-space: pre-line;
   }
   .rs-section {
     font-family: var(--font-sans);
@@ -78,6 +79,7 @@ export const resumeGlobalStyles = css`
     color: var(--text-secondary);
     letter-spacing: var(--tr-tight);
     word-break: keep-all;
+    white-space: pre-line;
   }
   .rs-bullet {
     font-family: var(--font-sans);
@@ -87,6 +89,7 @@ export const resumeGlobalStyles = css`
     color: var(--text-secondary);
     letter-spacing: var(--tr-tight);
     word-break: keep-all;
+    white-space: pre-line;
   }
   .rs-emphasis {
     font-family: var(--font-sans);
@@ -110,6 +113,7 @@ export const resumeGlobalStyles = css`
     color: var(--text-secondary);
     letter-spacing: var(--tr-tight);
     word-break: keep-all;
+    white-space: pre-line;
   }
   .rs-link {
     font-family: var(--font-mono);

@@ -43,14 +43,18 @@ function OutlineRow({
   blockType,
   data,
   ord,
+  canUp,
+  canDown,
 }: {
   blockId: string;
   blockType: string;
   data: unknown;
   ord: number;
+  canUp: boolean;
+  canDown: boolean;
 }) {
   const selected = useStore((s) => s.selectedBlockId === blockId);
-  const { selectBlock, removeBlock, duplicateBlock } = useActions();
+  const { selectBlock, removeBlock, duplicateBlock, moveBlockBy } = useActions();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `block:${blockId}`,
     data: { kind: 'block', blockId },
@@ -66,6 +70,28 @@ function OutlineRow({
     >
       <span className="ord">{String(ord + 1).padStart(2, '0')}</span>
       <span className="label">{shortLabelFor(blockType, data)}</span>
+      <button
+        className="icon-btn"
+        title="위로"
+        disabled={!canUp}
+        onClick={(e) => {
+          e.stopPropagation();
+          moveBlockBy(blockId, -1);
+        }}
+      >
+        ↑
+      </button>
+      <button
+        className="icon-btn"
+        title="아래로"
+        disabled={!canDown}
+        onClick={(e) => {
+          e.stopPropagation();
+          moveBlockBy(blockId, 1);
+        }}
+      >
+        ↓
+      </button>
       <button
         className="icon-btn"
         title="복제"
@@ -93,6 +119,7 @@ function OutlineRow({
 function Outline() {
   const resume = useCurrentResume();
   if (!resume) return null;
+  const totalPages = resume.pages.length;
   return (
     <div className="outline">
       {resume.pages.map((page, i) => (
@@ -104,9 +131,21 @@ function Outline() {
           {page.blocks.length === 0 ? (
             <div className="empty-state">비어있음</div>
           ) : (
-            page.blocks.map((b, idx) => (
-              <OutlineRow key={b.id} blockId={b.id} blockType={b.type} data={b.data} ord={idx} />
-            ))
+            page.blocks.map((b, idx) => {
+              const isFirstOnPage = idx === 0;
+              const isLastOnPage = idx === page.blocks.length - 1;
+              return (
+                <OutlineRow
+                  key={b.id}
+                  blockId={b.id}
+                  blockType={b.type}
+                  data={b.data}
+                  ord={idx}
+                  canUp={!isFirstOnPage || i > 0}
+                  canDown={!isLastOnPage || i < totalPages - 1}
+                />
+              );
+            })
           )}
         </div>
       ))}

@@ -22,6 +22,8 @@ export function Canvas() {
             page={page}
             pageIndex={i}
             total={resume.pages.length}
+            hasPrevPage={i > 0}
+            hasNextPage={i < resume.pages.length - 1}
             onMeasure={handleMeasure}
           />
         ))}

@@ -462,6 +462,41 @@ export const chromeGlobalStyles = css`
   .bb-wrap.is-hover .bb-label {
     opacity: 1;
   }
+  .bb-actions {
+    position: absolute;
+    top: -16px;
+    right: -1px;
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .bb-wrap.is-selected .bb-actions,
+  .bb-wrap.is-hover .bb-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .bb-action {
+    background: var(--accent-primary);
+    color: var(--accent-on);
+    border: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    width: 18px;
+    height: 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+  }
+  .bb-action:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .bb-action:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
 
   /* ── Inspector forms ─────────────────────────────────────────── */
   .field-group {

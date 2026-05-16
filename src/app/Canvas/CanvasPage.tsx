@@ -10,11 +10,15 @@ export function CanvasPage({
   pageIndex,
   total,
   onMeasure,
+  hasNextPage,
+  hasPrevPage,
 }: {
   page: Page;
   pageIndex: number;
   total: number;
   onMeasure: (pageId: string, overflowIds: string[]) => void;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }) {
   const { addPage, removePage, movePage } = useActions();
   const pageRef = useRef<HTMLDivElement | null>(null);
@@ -126,15 +130,19 @@ export function CanvasPage({
               컴포넌트를 드래그해서 이 페이지에 추가하세요.
             </div>
           ) : (
-            page.blocks.map((block) => {
+            page.blocks.map((block, idx) => {
               const def = getBlock(block.type);
               if (!def) return null;
               const Render = def.Render;
+              const isFirstOnPage = idx === 0;
+              const isLastOnPage = idx === page.blocks.length - 1;
               return (
                 <BlockWrap
                   key={block.id}
                   blockId={block.id}
                   blockType={block.type}
+                  canUp={!isFirstOnPage || hasPrevPage}
+                  canDown={!isLastOnPage || hasNextPage}
                   hostRef={(el) => {
                     blockRefs.current[block.id] = el;
                   }}

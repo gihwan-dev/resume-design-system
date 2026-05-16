@@ -28,6 +28,10 @@ export interface Actions {
   duplicateBlock: (blockId: string) => void;
   updateBlock: (blockId: string, data: Record<string, unknown>) => void;
   moveBlock: (opts: { blockId: string; toPageId: string; toIndex?: number }) => void;
+  /** Move a block one slot up (-1) or down (+1). Crosses page boundaries: from the
+   *  first block of a page, ↑ lands at the end of the previous page; from the last
+   *  block of a page, ↓ lands at the start of the next page. */
+  moveBlockBy: (blockId: string, delta: -1 | 1) => void;
 
   snapshotCreate: (name?: string) => void;
   snapshotDelete: (id: string) => void;
@@ -302,6 +306,42 @@ export const useStore = create<Store>()(
           if (target === loc.page && to > loc.index) to -= 1;
           to = Math.max(0, Math.min(target.blocks.length, to));
           target.blocks.splice(to, 0, removed!);
+          r.updatedAt = Date.now();
+        }),
+
+      moveBlockBy: (blockId, delta) =>
+        set((s) => {
+          const r = s.resumes[s.currentResumeId];
+          if (!r) return;
+          const pageIdx = r.pages.findIndex((p) => p.blocks.some((b) => b.id === blockId));
+          if (pageIdx < 0) return;
+          const page = r.pages[pageIdx]!;
+          const blockIdx = page.blocks.findIndex((b) => b.id === blockId);
+          if (blockIdx < 0) return;
+
+          const within = blockIdx + delta;
+          // Same-page neighbour swap
+          if (within >= 0 && within < page.blocks.length) {
+            const a = page.blocks[blockIdx]!;
+            const b = page.blocks[within]!;
+            page.blocks[blockIdx] = b;
+            page.blocks[within] = a;
+            r.updatedAt = Date.now();
+            return;
+          }
+          // Cross-page hop
+          const neighbourPageIdx = pageIdx + delta;
+          const neighbour = r.pages[neighbourPageIdx];
+          if (!neighbour) return; // already at the very top or bottom of the resume
+          const [moved] = page.blocks.splice(blockIdx, 1);
+          if (!moved) return;
+          if (delta < 0) {
+            // moving ↑: land at the end of the previous page
+            neighbour.blocks.push(moved);
+          } else {
+            // moving ↓: land at the start of the next page
+            neighbour.blocks.unshift(moved);
+          }
           r.updatedAt = Date.now();
         }),
 

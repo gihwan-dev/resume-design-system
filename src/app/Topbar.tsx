@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useActions, useCurrentResume, useStore } from '../store/store';
 import { printResume } from '../pdf/printResume';
 import { SaveIndicator } from './SaveIndicator';
+import { ShareMenu } from '../share/ShareMenu';
 
 function ClickAway({ onClose, children }: { onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -248,6 +249,7 @@ export function Topbar({
       </div>
       <div className="topbar-section">
         <SnapshotsButton />
+        <ShareMenu />
         <button className="btn" onClick={() => setPreview(!preview)}>
           {preview ? 'Preview ON' : 'Preview'}
         </button>

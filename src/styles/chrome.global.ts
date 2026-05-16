@@ -722,4 +722,160 @@ export const chromeGlobalStyles = css`
     display: flex;
     gap: 4px;
   }
+
+  /* ── Share / Copy-Paste ──────────────────────────────────────── */
+  .share-toast {
+    position: fixed;
+    top: 56px;
+    right: 18px;
+    background: var(--text-primary);
+    color: var(--bg-paper);
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    box-shadow: 0 8px 24px rgba(24, 24, 27, 0.18);
+    z-index: 200;
+    animation: rds-toast-in 120ms ease-out;
+  }
+  @keyframes rds-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .share-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 24, 27, 0.45);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .share-modal {
+    width: min(560px, 100%);
+    max-height: 80vh;
+    background: var(--chrome-panel);
+    border: 1px solid var(--chrome-panel-border);
+    border-radius: 8px;
+    box-shadow: 0 24px 48px rgba(24, 24, 27, 0.24);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .share-modal-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--chrome-panel-border);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .share-modal-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: auto;
+  }
+  .share-modal-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .share-modal-textarea {
+    min-height: 220px;
+    border: 1px solid var(--chrome-panel-border);
+    border-radius: 4px;
+    background: var(--bg-paper);
+    color: var(--text-primary);
+    padding: 8px 10px;
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .share-modal-textarea:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: -1px;
+    border-color: transparent;
+  }
+  .share-modal-error {
+    color: var(--chrome-danger);
+    font-size: 12px;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 4px;
+    padding: 6px 10px;
+  }
+  .share-modal-preview {
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    background: var(--chrome-hover);
+    border-radius: 4px;
+    padding: 6px 10px;
+  }
+  .share-modal-actions {
+    padding: 10px 16px;
+    border-top: 1px solid var(--chrome-panel-border);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  /* ── Share viewer (read-only mode) ───────────────────────────── */
+  body[data-mode='share'] .topbar,
+  body[data-mode='share'] .panel-left,
+  body[data-mode='share'] .panel-right,
+  body[data-mode='share'] .canvas-add-page,
+  body[data-mode='share'] .canvas-page-tag,
+  body[data-mode='share'] .canvas-page-actions,
+  body[data-mode='share'] .canvas-overflow,
+  body[data-mode='share'] .canvas-overflow-banner,
+  body[data-mode='share'] [data-print='hide'] {
+    display: none !important;
+  }
+  .canvas-wrap.is-share {
+    padding: 24px 24px 48px;
+  }
+  .share-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+  .block-wrap.is-readonly {
+    user-select: text;
+  }
+
+  .share-error {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+  .share-error-card {
+    max-width: 420px;
+    text-align: center;
+    background: var(--chrome-panel);
+    border: 1px solid var(--chrome-panel-border);
+    border-radius: 8px;
+    padding: 28px 28px 24px;
+  }
+  .share-error-card h2 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+  .share-error-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
 `;

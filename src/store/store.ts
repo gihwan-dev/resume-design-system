@@ -4,6 +4,7 @@ import type { AppState, Page, Resume, Snapshot } from './types';
 import type { Block, BlockType } from '../blocks';
 import { getBlock } from '../blocks';
 import { uid } from '../lib/uid';
+import { importAsNewResume, type ResumeExportV1 } from '../share/exportFormat';
 
 const SCHEMA_VERSION = 1;
 
@@ -17,6 +18,7 @@ export interface Actions {
   renameResume: (id: string, name: string) => void;
   duplicateResume: (id: string) => void;
   deleteResume: (id: string) => void;
+  importResume: (data: ResumeExportV1) => string;
   setResumeTheme: (id: string, theme: string) => void;
 
   addPage: (afterPageId?: string) => void;
@@ -185,6 +187,24 @@ export const useStore = create<Store>()(
             s.selectedBlockId = null;
           }
         }),
+
+      importResume: (data) => {
+        let newId = '';
+        set((s) => {
+          const resume = importAsNewResume(data);
+          // 같은 이름이 이미 있으면 충돌 회피용 접미사. 비교는 trim 기준.
+          const trimmed = resume.name.trim();
+          const existingNames = new Set(Object.values(s.resumes).map((r) => r.name.trim()));
+          if (existingNames.has(trimmed)) {
+            resume.name = `${trimmed} (가져옴)`;
+          }
+          s.resumes[resume.id] = resume;
+          s.currentResumeId = resume.id;
+          s.selectedBlockId = null;
+          newId = resume.id;
+        });
+        return newId;
+      },
 
       setResumeTheme: (id, theme) =>
         set((s) => {

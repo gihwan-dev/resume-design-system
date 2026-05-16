@@ -58,8 +58,7 @@ export function seedAppState(): AppState {
     }),
     b('par', {
       label: '',
-      problem:
-        'CRA 기반 5개 제품에서 빌드 시간 ==평균 90s==, 신규 기능 추가 시 회귀 빈도 높음.',
+      problem: 'CRA 기반 5개 제품에서 빌드 시간 ==평균 90s==, 신규 기능 추가 시 회귀 빈도 높음.',
       action:
         'Vite 전환 + 공용 데이터 그리드 추출 + 상태 모델을 `Zustand + Immer` 슬라이스로 정리.',
       result: '빌드 시간 ==90s → 12s==, 첫 페인트 ==1.8s → 0.7s==, 회귀 PR 4건 → 0건.',

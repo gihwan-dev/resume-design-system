@@ -1,5 +1,6 @@
 import { rt } from '../../rich-text/parse';
 import { formatStack } from '../../lib/formatStack';
+import { LinkChip } from '../../components/LinkChip';
 import type { CaseStudyData } from './types';
 
 /**
@@ -41,12 +42,7 @@ export function CaseStudyBlock({ data }: { data: CaseStudyData }) {
       {links.length > 0 && (
         <div className="rs-links" style={{ marginTop: 8 }}>
           {links.map((l, i) => (
-            <div key={i} className="rs-link-cell">
-              <div className="rs-link-label">{l.label || 'LINK'}</div>
-              <a className="rs-link" href={l.href || '#'} target="_blank" rel="noreferrer">
-                {l.href}
-              </a>
-            </div>
+            <LinkChip key={i} href={l.href} alias={l.alias ?? l.label} />
           ))}
         </div>
       )}

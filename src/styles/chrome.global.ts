@@ -659,6 +659,14 @@ export const chromeGlobalStyles = css`
     letter-spacing: 0.08em;
     color: var(--text-muted);
   }
+  .sub-card-preview {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--chrome-panel-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
   .icon-btn {
     border: 0;
     background: transparent;

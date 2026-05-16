@@ -56,4 +56,48 @@ describe('block registry', () => {
       expect(out.container.textContent).toContain('line1\nline2');
     }
   });
+
+  it('linkRow chip absorbs pre-migration { label, text, href } as alias', () => {
+    const def = getBlock('linkRow');
+    expect(def).toBeDefined();
+    if (!def) return;
+    const Render = def.Render;
+    const { container } = render(
+      <Render
+        data={{
+          links: [
+            { href: 'https://github.com/me', label: 'OLD_LABEL', text: 'old-text' },
+            { href: 'https://my-blog.dev', alias: 'My Blog' },
+          ],
+        }}
+      />,
+    );
+    // alias absent → falls back to text (old data shape), then label.
+    expect(container.textContent).toContain('old-text');
+    // explicit alias wins.
+    expect(container.textContent).toContain('My Blog');
+  });
+
+  it('caseStudy links chip absorbs pre-migration { label, href } as alias', () => {
+    const def = getBlock('caseStudy');
+    expect(def).toBeDefined();
+    if (!def) return;
+    const Render = def.Render;
+    const { container } = render(
+      <Render
+        data={{
+          title: 'X',
+          period: '',
+          stack: '',
+          role: '',
+          context: '',
+          built: '',
+          outcome: '',
+          learning: '',
+          links: [{ href: 'https://demo.app', label: 'DEMO' }],
+        }}
+      />,
+    );
+    expect(container.textContent).toContain('DEMO');
+  });
 });

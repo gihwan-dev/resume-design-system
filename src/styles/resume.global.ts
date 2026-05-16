@@ -412,8 +412,38 @@ export const resumeGlobalStyles = css`
   .rs-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 28px;
+    gap: 6px 14px;
+    align-items: center;
   }
+  .rs-link-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-size: var(--fs-link);
+    color: var(--text-primary);
+    text-decoration: none;
+    line-height: 1.4;
+    letter-spacing: var(--tr-tight);
+  }
+  .rs-link-chip-icon {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex: 0 0 auto;
+    color: var(--text-muted);
+  }
+  .rs-link-chip-label {
+    border-bottom: var(--bw-hair) solid var(--border-subtle);
+    padding-bottom: 1px;
+  }
+  .rs-link-chip:hover .rs-link-chip-label {
+    color: var(--accent-primary);
+    border-bottom-color: var(--accent-primary);
+  }
+  /* Legacy cell layout kept for back-compat with the old .rs-link-* classes
+     in case any external usage still references them. Safe to remove
+     once the wider codebase has migrated. */
   .rs-link-cell {
     display: flex;
     flex-direction: column;

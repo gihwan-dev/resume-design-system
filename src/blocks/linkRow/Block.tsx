@@ -1,3 +1,4 @@
+import { LinkChip } from '../../components/LinkChip';
 import type { LinkRowData } from './types';
 
 export function LinkRowBlock({ data }: { data: LinkRowData }) {
@@ -5,12 +6,7 @@ export function LinkRowBlock({ data }: { data: LinkRowData }) {
   return (
     <div className="rs-links">
       {links.map((l, i) => (
-        <div key={i} className="rs-link-cell">
-          <div className="rs-link-label">{l.label}</div>
-          <a className="rs-link" href={l.href || '#'} target="_blank" rel="noreferrer">
-            {l.text}
-          </a>
-        </div>
+        <LinkChip key={i} href={l.href} alias={l.alias ?? l.text ?? l.label} />
       ))}
     </div>
   );

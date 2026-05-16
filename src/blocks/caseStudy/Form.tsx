@@ -1,6 +1,8 @@
 import type { Block } from '../types';
 import type { CaseStudyData, CaseStudyLink } from './types';
 import { Field, IconBtn, RT_HINT, TextArea, TextInput } from '../../app/Inspector/primitives';
+import { LinkChip } from '../../components/LinkChip';
+import { inferAliasFromUrl } from '../../lib/linkAlias';
 
 export function CaseStudyForm({
   block,
@@ -82,26 +84,40 @@ export function CaseStudyForm({
       <div className="panel-section-title" style={{ marginTop: 8 }}>
         링크 (선택)
       </div>
-      {links.map((l, i) => (
-        <div key={i} className="sub-card">
-          <div className="sub-card-head">
-            <div className="sub-card-title">Link {String(i + 1).padStart(2, '0')}</div>
-            <IconBtn title="삭제" onClick={() => removeLink(i)} danger>
-              ×
-            </IconBtn>
+      {links.map((l, i) => {
+        const fallbackAlias = l.alias ?? l.label;
+        const aliasPlaceholder = inferAliasFromUrl(l.href) || '자동 추론';
+        return (
+          <div key={i} className="sub-card">
+            <div className="sub-card-head">
+              <div className="sub-card-title">Link {String(i + 1).padStart(2, '0')}</div>
+              <IconBtn title="삭제" onClick={() => removeLink(i)} danger>
+                ×
+              </IconBtn>
+            </div>
+            <Field label="URL">
+              <TextInput value={l.href} onChange={(v) => setLink(i, { href: v })} mono />
+            </Field>
+            <Field label="Alias" hint="비워두면 도메인에서 자동 추론됩니다.">
+              <TextInput
+                value={l.alias}
+                onChange={(v) => setLink(i, { alias: v })}
+                placeholder={aliasPlaceholder}
+                mono
+              />
+            </Field>
+            {l.href && (
+              <div className="sub-card-preview">
+                <LinkChip href={l.href} alias={fallbackAlias} />
+              </div>
+            )}
           </div>
-          <Field label="라벨">
-            <TextInput value={l.label} onChange={(v) => setLink(i, { label: v })} mono />
-          </Field>
-          <Field label="URL">
-            <TextInput value={l.href} onChange={(v) => setLink(i, { href: v })} mono />
-          </Field>
-        </div>
-      ))}
+        );
+      })}
       <button
         type="button"
         className="btn"
-        onClick={() => update({ links: [...links, { label: 'DEMO', href: 'https://' }] })}
+        onClick={() => update({ links: [...links, { href: 'https://' }] })}
       >
         + 링크 추가
       </button>

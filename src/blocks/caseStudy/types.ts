@@ -1,6 +1,8 @@
 export interface CaseStudyLink {
-  label: string;
   href: string;
+  alias?: string;
+  // Kept temporarily for resumes saved before the alias migration.
+  label?: string;
 }
 
 /**

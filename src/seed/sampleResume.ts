@@ -25,7 +25,12 @@ export function seedAppState(): AppState {
       name: '홍길동',
       role: 'Frontend Engineer',
       tagline: '확장 가능한 구조를 설계하는 프론트엔드 개발자',
-      contacts: ['email@example.com', '+82 10 0000 0000', 'github.com/handle'],
+      contacts: [
+        'email@example.com',
+        '+82 10 0000 0000',
+        'github.com/handle',
+        'https://example.dev',
+      ],
     }),
     b('positioning', {
       text: '복잡한 운영 UI와 대규모 데이터 화면을 **상태 모델, 렌더링 경계, 테스트 가능한 계약**으로 정리합니다. 기능이 늘어날 때 복잡도가 폭증하는 지점을 먼저 찾고, 구조와 품질 기준을 함께 설계해 제품과 팀이 계속 확장될 수 있는 기반을 만듭니다.',
@@ -82,14 +87,6 @@ export function seedAppState(): AppState {
     b('sectionHeader', { title: 'Education', meta: '', variant: 'primary' }),
     b('education', {
       rows: [{ key: '학사', val: '학교명 · 컴퓨터공학 · 2020' }],
-    }),
-    b('sectionHeader', { title: 'Links', meta: '', variant: 'primary' }),
-    b('linkRow', {
-      links: [
-        { label: 'Portfolio', text: 'site.dev', href: 'https://example.dev' },
-        { label: 'GitHub', text: 'github.com/handle', href: 'https://github.com/' },
-        { label: 'Blog', text: 'blog.example.dev', href: 'https://example.dev' },
-      ],
     }),
   ]);
 

@@ -40,6 +40,10 @@ export function parseHostname(href: string | undefined | null): string | null {
   if (!href) return null;
   const trimmed = href.trim();
   if (!trimmed) return null;
+  // A bare integer like "1234" is parsed by URL() as an IPv4 form
+  // (0.0.4.210), which we don't want — require at least one letter or
+  // explicit dot before even trying.
+  if (!/[a-zA-Z]/.test(trimmed) && !/\./.test(trimmed)) return null;
   // URL() throws on relative-looking inputs; prepend http:// when needed.
   const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : 'http://' + trimmed;
   try {

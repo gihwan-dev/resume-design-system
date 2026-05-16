@@ -201,16 +201,15 @@ export const resumeGlobalStyles = css`
   .rs-header-contacts {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
+    gap: 6px 14px;
     font-family: var(--font-mono);
     font-size: var(--fs-contact);
     color: var(--text-muted);
     line-height: 1.5;
   }
-  .rs-header-sep {
-    color: var(--text-faint);
-    margin: 0 8px;
-    user-select: none;
+  .rs-header-contacts .rs-contact {
+    color: var(--text-muted);
   }
 
   /* ── Positioning Statement ───────────────────────────────────── */

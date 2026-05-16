@@ -4,6 +4,7 @@ import { loadState, saveState } from './persistence';
 import { useSaveStatus } from './saveStatus';
 import { seedAppState } from '../seed/sampleResume';
 import { debounce } from '../lib/debounce';
+import { migrateAppState } from './migrations';
 
 /**
  * Bootstrap hook — loads persisted state once on mount, then
@@ -21,7 +22,7 @@ export function useBootstrap(): { ready: boolean } {
       const persisted = await loadState();
       if (cancelled) return;
       if (persisted && Object.keys(persisted.resumes ?? {}).length > 0) {
-        useStore.getState().actions.loadState(persisted);
+        useStore.getState().actions.loadState(migrateAppState(persisted));
       } else {
         useStore.getState().actions.loadState(seedAppState());
       }

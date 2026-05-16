@@ -16,7 +16,6 @@ import './caseStudy';
 import './skills';
 import './learningNote';
 import './education';
-import './linkRow';
 import './freeText';
 import './divider';
 import './spacer';

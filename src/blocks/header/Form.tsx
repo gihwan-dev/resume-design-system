@@ -39,7 +39,10 @@ export function HeaderForm({
       <Field label="포지셔닝 한 줄">
         <TextArea rows={2} value={d.tagline} onChange={(v) => update({ tagline: v })} />
       </Field>
-      <Field label="연락처">
+      <Field
+        label="연락처 · 링크"
+        hint="이메일, 전화번호, 홈페이지/GitHub 같은 URL을 한 줄씩 추가하세요. 자동으로 알맞은 아이콘과 링크가 붙습니다."
+      >
         <div className="tag-list">
           {(d.contacts ?? []).map((c, i) => (
             <span key={i} className="tag">
@@ -51,7 +54,12 @@ export function HeaderForm({
           ))}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <TextInput value={draft} onChange={setDraft} placeholder="email@example.com" mono />
+          <TextInput
+            value={draft}
+            onChange={setDraft}
+            placeholder="email · +82 10 0000 0000 · github.com/handle"
+            mono
+          />
           <button type="button" className="btn" onClick={addContact}>
             추가
           </button>

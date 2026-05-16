@@ -1,5 +1,5 @@
-import { Fragment } from 'react';
 import type { HeaderData } from './types';
+import { ContactItem } from '../../components/ContactItem';
 
 export function HeaderBlock({ data }: { data: HeaderData }) {
   const { name, role, tagline, contacts = [] } = data;
@@ -11,14 +11,7 @@ export function HeaderBlock({ data }: { data: HeaderData }) {
       {contacts.length > 0 && (
         <div className="rs-header-contacts">
           {contacts.map((c, i) => (
-            <Fragment key={i}>
-              {i > 0 && (
-                <span className="rs-header-sep" aria-hidden="true">
-                  ·
-                </span>
-              )}
-              <span className="rs-contact">{c}</span>
-            </Fragment>
+            <ContactItem key={i} raw={c} />
           ))}
         </div>
       )}

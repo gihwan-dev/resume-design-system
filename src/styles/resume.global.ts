@@ -168,7 +168,7 @@ export const resumeGlobalStyles = css`
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .rs-section-header + .rs-career,
+  .rs-section-header + .rs-career-header,
   .rs-section-header + .rs-project,
   .rs-section-header + .rs-impact,
   .rs-section-header + .rs-skills,
@@ -263,12 +263,17 @@ export const resumeGlobalStyles = css`
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── Career L1 ───────────────────────────────────────────────── */
-  .rs-career {
-    margin-bottom: var(--gap-section);
+  /* ── Career Header L1 ────────────────────────────────────────── */
+  /* Self-sufficient: each block carries its own spacing so the
+     hierarchy survives being split across pages. */
+  .rs-career-header {
+    margin-bottom: 10px;
   }
-  .rs-career + .rs-career {
-    margin-top: calc(-1 * var(--gap-section) + 14px);
+  /* When two careerHeader blocks land adjacent on the same page, draw
+     a hairline so they visually separate. If they end up on different
+     pages, this rule simply doesn't apply — also acceptable. */
+  .rs-career-header + .rs-career-header {
+    margin-top: 14px;
     padding-top: 14px;
     border-top: 0.5px solid var(--border-subtle);
   }
@@ -299,14 +304,12 @@ export const resumeGlobalStyles = css`
   .rs-career-summary {
     margin: 4px 0 0 0;
   }
-  .rs-career-projects {
-    margin-top: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
 
   /* ── Project L2 ──────────────────────────────────────────────── */
+  .rs-project--standalone {
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
   .rs-project-top {
     display: flex;
     justify-content: space-between;
@@ -325,22 +328,22 @@ export const resumeGlobalStyles = css`
     color: var(--text-muted);
   }
   .rs-project-stack {
-    margin: 3px 0 8px 0;
+    margin: 3px 0 0 0;
   }
-  .rs-project:not(:has(.rs-project-stack)) .rs-project-pars {
+
+  /* ── PAR L3 (standalone block) ───────────────────────────────── */
+  .rs-par-block--standalone {
     margin-top: 8px;
   }
-  .rs-project-pars {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .rs-project-pars > .rs-par-block + .rs-par-block {
+  /* Two adjacent standalone PAR blocks on the same page get a soft
+     dashed divider so they don't blur together. Page-split? Divider
+     drops — fine, the page break itself separates them. */
+  .rs-par-block--standalone + .rs-par-block--standalone {
     padding-top: 10px;
     border-top: 0.5px dashed var(--border-subtle);
   }
 
-  /* ── PAR L3 ──────────────────────────────────────────────────── */
+  /* ── PAR label / dl ──────────────────────────────────────────── */
   .rs-par-label {
     font-family: var(--font-mono);
     font-size: 10.5px;
@@ -454,6 +457,15 @@ export const resumeGlobalStyles = css`
     text-transform: uppercase;
     letter-spacing: var(--tr-section);
     color: var(--text-faint);
+  }
+
+  /* ── Case Study helpers ──────────────────────────────────────── */
+  .rs-case-meta-sep {
+    margin: 0 6px;
+    color: var(--text-faint);
+  }
+  .rs-case-links {
+    margin-top: 8px;
   }
 
   /* ── Inline helpers ──────────────────────────────────────────── */

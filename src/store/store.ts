@@ -76,6 +76,17 @@ export const useStore = create<Store>()(
     actions: {
       loadState: (state) =>
         set((s) => {
+          // Filter out blocks whose type is no longer registered (e.g. legacy
+          // `career` / `caseStudy` from before the v2 decomposition). Without
+          // this guard, persisted state from an older schema would still load
+          // those blocks; render is null-safe but duplicate/move/inspector
+          // paths can surprise the user. Drop them so the resume opens clean.
+          for (const r of Object.values(state.resumes ?? {})) {
+            r.pages = r.pages.map((p) => ({
+              ...p,
+              blocks: p.blocks.filter((b) => getBlock(b.type) != null),
+            }));
+          }
           Object.assign(s, state);
         }),
 
@@ -106,7 +117,9 @@ export const useStore = create<Store>()(
                       type: 'sectionHeader',
                       data: { title: 'Career', meta: '', variant: 'primary' },
                     },
-                    makeBlock('career')!,
+                    makeBlock('careerHeader')!,
+                    makeBlock('careerProject')!,
+                    makeBlock('par')!,
                   ],
                 },
               ];
@@ -265,17 +278,6 @@ export const useStore = create<Store>()(
               const src = p.blocks[idx]!;
               const dup: Block = JSON.parse(JSON.stringify(src));
               dup.id = uid('b');
-              // Rebuild ids in known nested structures
-              if (dup.type === 'career') {
-                const data = dup.data as { projects?: { id: string; pars?: { id: string }[] }[] };
-                if (data.projects) {
-                  data.projects = data.projects.map((prj) => ({
-                    ...prj,
-                    id: uid('prj'),
-                    pars: (prj.pars || []).map((par) => ({ ...par, id: uid('par') })),
-                  }));
-                }
-              }
               p.blocks.splice(idx + 1, 0, dup);
               s.selectedBlockId = dup.id;
               break;

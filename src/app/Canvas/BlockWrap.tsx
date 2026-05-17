@@ -101,13 +101,8 @@ export function BlockWrap({
             className="bb-action bb-action-danger"
             title={isMulti ? `선택된 ${selectionCount}개 삭제` : '삭제'}
             onClick={() => {
-              const msg = isMulti
-                ? `선택된 ${selectionCount}개 블록을 삭제할까요?`
-                : '이 블록을 삭제할까요?';
-              if (confirm(msg)) {
-                if (isMulti) removeSelectedBlocks();
-                else removeBlock(blockId);
-              }
+              if (isMulti) removeSelectedBlocks();
+              else removeBlock(blockId);
             }}
           >
             ×

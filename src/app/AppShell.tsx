@@ -33,9 +33,7 @@ export function AppShell() {
         const ids = useStore.getState().selectedBlockIds;
         if (ids.length === 0) return;
         e.preventDefault();
-        const msg =
-          ids.length === 1 ? '이 블록을 삭제할까요?' : `선택된 ${ids.length}개 블록을 삭제할까요?`;
-        if (confirm(msg)) removeSelectedBlocks();
+        removeSelectedBlocks();
       }
     };
     window.addEventListener('keydown', onKey);

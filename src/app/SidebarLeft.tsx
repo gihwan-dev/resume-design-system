@@ -142,7 +142,7 @@ function OutlineRow({
         title="삭제"
         onClick={(e) => {
           e.stopPropagation();
-          if (confirm('이 블록을 삭제할까요?')) removeBlock(blockId);
+          removeBlock(blockId);
         }}
       >
         ×

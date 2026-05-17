@@ -46,14 +46,7 @@ export function Inspector() {
               <br />
               단일 선택 시 편집할 수 있어요.
               <div style={{ marginTop: 12 }}>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => {
-                    if (confirm(`선택된 ${selectionCount}개 블록을 삭제할까요?`)) {
-                      removeSelectedBlocks();
-                    }
-                  }}
-                >
+                <button className="btn btn-danger" onClick={() => removeSelectedBlocks()}>
                   선택 {selectionCount}개 모두 삭제
                 </button>
               </div>
@@ -84,12 +77,7 @@ export function Inspector() {
         <button className="btn" onClick={() => duplicateBlock(sel.block.id)} title="블록 복제">
           복제
         </button>
-        <button
-          className="btn btn-danger"
-          onClick={() => {
-            if (confirm('이 블록을 삭제할까요?')) removeBlock(sel.block.id);
-          }}
-        >
+        <button className="btn btn-danger" onClick={() => removeBlock(sel.block.id)}>
           삭제
         </button>
       </div>

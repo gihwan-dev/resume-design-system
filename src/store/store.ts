@@ -12,6 +12,8 @@ export interface Actions {
   loadState: (state: AppState) => void;
 
   selectBlock: (id: string | null) => void;
+  toggleBlockSelection: (id: string) => void;
+  selectBlockRange: (toId: string) => void;
   selectResume: (id: string) => void;
 
   createResume: (opts: { name?: string; empty?: boolean }) => void;
@@ -34,6 +36,11 @@ export interface Actions {
    *  first block of a page, ↑ lands at the end of the previous page; from the last
    *  block of a page, ↓ lands at the start of the next page. */
   moveBlockBy: (blockId: string, delta: -1 | 1) => void;
+  /** Move every currently-selected block one slot in the given direction. Members
+   *  of the same selection group are treated as cohesive: an adjacent block that
+   *  is also selected is skipped over rather than swapped with, so relative
+   *  ordering inside the group is preserved. */
+  moveBlocksBy: (delta: -1 | 1) => void;
 
   snapshotCreate: (name?: string) => void;
   snapshotDelete: (id: string) => void;
@@ -57,6 +64,61 @@ function findBlockLocation(
   return null;
 }
 
+/** Flat traversal order across all pages: [{ pageIdx, blockIdx, id }, ...]. */
+function flattenBlocks(resume: Resume): Array<{ pageIdx: number; blockIdx: number; id: string }> {
+  const out: Array<{ pageIdx: number; blockIdx: number; id: string }> = [];
+  resume.pages.forEach((p, pageIdx) =>
+    p.blocks.forEach((b, blockIdx) => out.push({ pageIdx, blockIdx, id: b.id })),
+  );
+  return out;
+}
+
+/** Move a single block one slot, skipping over neighbours that are members of
+ *  the same selection group so the group stays cohesive. Returns true if the
+ *  block actually moved. */
+function moveOneByWithSkip(
+  resume: Resume,
+  blockId: string,
+  delta: -1 | 1,
+  skipSet: Set<string>,
+): boolean {
+  const pageIdx = resume.pages.findIndex((p) => p.blocks.some((b) => b.id === blockId));
+  if (pageIdx < 0) return false;
+  const page = resume.pages[pageIdx]!;
+  const blockIdx = page.blocks.findIndex((b) => b.id === blockId);
+  if (blockIdx < 0) return false;
+
+  let withinIdx = blockIdx + delta;
+  while (
+    withinIdx >= 0 &&
+    withinIdx < page.blocks.length &&
+    skipSet.has(page.blocks[withinIdx]!.id)
+  ) {
+    withinIdx += delta;
+  }
+
+  if (withinIdx >= 0 && withinIdx < page.blocks.length) {
+    const a = page.blocks[blockIdx]!;
+    const b = page.blocks[withinIdx]!;
+    page.blocks[blockIdx] = b;
+    page.blocks[withinIdx] = a;
+    return true;
+  }
+
+  // Cross-page hop
+  const neighbourPageIdx = pageIdx + delta;
+  const neighbour = resume.pages[neighbourPageIdx];
+  if (!neighbour) return false;
+  const [moved] = page.blocks.splice(blockIdx, 1);
+  if (!moved) return false;
+  if (delta < 0) {
+    neighbour.blocks.push(moved);
+  } else {
+    neighbour.blocks.unshift(moved);
+  }
+  return true;
+}
+
 function makeBlock(blockType: BlockType): Block | null {
   const def = getBlock(blockType);
   if (!def) return null;
@@ -67,7 +129,7 @@ function emptyState(): AppState {
   return {
     schemaVersion: SCHEMA_VERSION,
     currentResumeId: '',
-    selectedBlockId: null,
+    selectedBlockIds: [],
     resumes: {},
   };
 }
@@ -89,17 +151,61 @@ export const useStore = create<Store>()(
               blocks: p.blocks.filter((b) => getBlock(b.type) != null),
             }));
           }
+          // Migrate legacy single-selection field if present in persisted state.
+          const incomingIds = (state as unknown as { selectedBlockIds?: unknown }).selectedBlockIds;
+          const incomingSingle = (state as unknown as { selectedBlockId?: unknown })
+            .selectedBlockId;
+          const ids: string[] = Array.isArray(incomingIds)
+            ? (incomingIds as string[])
+            : typeof incomingSingle === 'string'
+              ? [incomingSingle]
+              : [];
           Object.assign(s, state);
+          s.selectedBlockIds = ids;
+          delete (s as unknown as { selectedBlockId?: unknown }).selectedBlockId;
         }),
 
       selectBlock: (id) =>
         set((s) => {
-          s.selectedBlockId = id;
+          s.selectedBlockIds = id ? [id] : [];
+        }),
+      toggleBlockSelection: (id) =>
+        set((s) => {
+          const i = s.selectedBlockIds.indexOf(id);
+          if (i === -1) {
+            s.selectedBlockIds.push(id);
+          } else {
+            s.selectedBlockIds.splice(i, 1);
+          }
+        }),
+      selectBlockRange: (toId) =>
+        set((s) => {
+          const r = s.resumes[s.currentResumeId];
+          if (!r) return;
+          const anchor = s.selectedBlockIds.at(-1);
+          if (!anchor) {
+            s.selectedBlockIds = [toId];
+            return;
+          }
+          const flat = flattenBlocks(r);
+          const ai = flat.findIndex((x) => x.id === anchor);
+          const bi = flat.findIndex((x) => x.id === toId);
+          if (ai < 0 || bi < 0) {
+            s.selectedBlockIds = [toId];
+            return;
+          }
+          const [from, to] = ai <= bi ? [ai, bi] : [bi, ai];
+          const range = flat.slice(from, to + 1).map((x) => x.id);
+          // Keep anchor as the last entry so Shift+Click extensions continue
+          // to use the original anchor as the pivot.
+          const ordered = range.filter((id) => id !== anchor);
+          ordered.push(anchor);
+          s.selectedBlockIds = ordered;
         }),
       selectResume: (id) =>
         set((s) => {
           s.currentResumeId = id;
-          s.selectedBlockId = null;
+          s.selectedBlockIds = [];
         }),
 
       createResume: ({ name, empty }) =>
@@ -135,7 +241,7 @@ export const useStore = create<Store>()(
             snapshots: [],
           };
           s.currentResumeId = id;
-          s.selectedBlockId = null;
+          s.selectedBlockIds = [];
         }),
 
       renameResume: (id, name) =>
@@ -161,7 +267,7 @@ export const useStore = create<Store>()(
           };
           s.resumes[newId] = dup;
           s.currentResumeId = newId;
-          s.selectedBlockId = null;
+          s.selectedBlockIds = [];
         }),
 
       deleteResume: (id) =>
@@ -184,7 +290,7 @@ export const useStore = create<Store>()(
             } else {
               s.currentResumeId = remaining[0]!;
             }
-            s.selectedBlockId = null;
+            s.selectedBlockIds = [];
           }
         }),
 
@@ -231,9 +337,7 @@ export const useStore = create<Store>()(
           if (!r) return;
           if (r.pages.length <= 1) return;
           r.pages = r.pages.filter((p) => p.id !== pageId);
-          if (s.selectedBlockId && !findBlockLocation(r, s.selectedBlockId)) {
-            s.selectedBlockId = null;
-          }
+          s.selectedBlockIds = s.selectedBlockIds.filter((id) => findBlockLocation(r, id));
           r.updatedAt = Date.now();
         }),
 
@@ -266,7 +370,7 @@ export const useStore = create<Store>()(
           } as Block;
           const at = index == null ? page.blocks.length : index;
           page.blocks.splice(at, 0, newBlock);
-          s.selectedBlockId = newBlock.id;
+          s.selectedBlockIds = [newBlock.id];
           newId = newBlock.id;
           r.updatedAt = Date.now();
         });
@@ -284,7 +388,7 @@ export const useStore = create<Store>()(
               break;
             }
           }
-          if (s.selectedBlockId === blockId) s.selectedBlockId = null;
+          s.selectedBlockIds = s.selectedBlockIds.filter((id) => id !== blockId);
           r.updatedAt = Date.now();
         }),
 
@@ -299,7 +403,7 @@ export const useStore = create<Store>()(
               const dup: Block = JSON.parse(JSON.stringify(src));
               dup.id = uid('b');
               p.blocks.splice(idx + 1, 0, dup);
-              s.selectedBlockId = dup.id;
+              s.selectedBlockIds = [dup.id];
               break;
             }
           }
@@ -335,36 +439,27 @@ export const useStore = create<Store>()(
         set((s) => {
           const r = s.resumes[s.currentResumeId];
           if (!r) return;
-          const pageIdx = r.pages.findIndex((p) => p.blocks.some((b) => b.id === blockId));
-          if (pageIdx < 0) return;
-          const page = r.pages[pageIdx]!;
-          const blockIdx = page.blocks.findIndex((b) => b.id === blockId);
-          if (blockIdx < 0) return;
-
-          const within = blockIdx + delta;
-          // Same-page neighbour swap
-          if (within >= 0 && within < page.blocks.length) {
-            const a = page.blocks[blockIdx]!;
-            const b = page.blocks[within]!;
-            page.blocks[blockIdx] = b;
-            page.blocks[within] = a;
+          if (moveOneByWithSkip(r, blockId, delta, new Set([blockId]))) {
             r.updatedAt = Date.now();
-            return;
           }
-          // Cross-page hop
-          const neighbourPageIdx = pageIdx + delta;
-          const neighbour = r.pages[neighbourPageIdx];
-          if (!neighbour) return; // already at the very top or bottom of the resume
-          const [moved] = page.blocks.splice(blockIdx, 1);
-          if (!moved) return;
-          if (delta < 0) {
-            // moving ↑: land at the end of the previous page
-            neighbour.blocks.push(moved);
-          } else {
-            // moving ↓: land at the start of the next page
-            neighbour.blocks.unshift(moved);
+        }),
+
+      moveBlocksBy: (delta) =>
+        set((s) => {
+          const r = s.resumes[s.currentResumeId];
+          if (!r) return;
+          if (s.selectedBlockIds.length === 0) return;
+          const skip = new Set(s.selectedBlockIds);
+          // Sort selected blocks in resume traversal order.
+          const ordered = flattenBlocks(r)
+            .filter((x) => skip.has(x.id))
+            .map((x) => x.id);
+          const seq = delta < 0 ? ordered : [...ordered].reverse();
+          let moved = false;
+          for (const id of seq) {
+            if (moveOneByWithSkip(r, id, delta, skip)) moved = true;
           }
-          r.updatedAt = Date.now();
+          if (moved) r.updatedAt = Date.now();
         }),
 
       snapshotCreate: (name) =>
@@ -403,7 +498,7 @@ export const useStore = create<Store>()(
           };
           r.snapshots = [autoSnap, ...r.snapshots];
           r.pages = JSON.parse(JSON.stringify(snap.pages)) as Page[];
-          s.selectedBlockId = null;
+          s.selectedBlockIds = [];
           r.updatedAt = Date.now();
         }),
 
@@ -422,7 +517,7 @@ export function getStateSnapshot(): AppState {
   return {
     schemaVersion: s.schemaVersion,
     currentResumeId: s.currentResumeId,
-    selectedBlockId: s.selectedBlockId,
+    selectedBlockIds: s.selectedBlockIds,
     resumes: s.resumes,
   };
 }
@@ -430,12 +525,40 @@ export function getStateSnapshot(): AppState {
 export const useActions = () => useStore((s) => s.actions);
 export const useCurrentResume = () => useStore((s) => s.resumes[s.currentResumeId]);
 export const useSelectedBlock = () => {
-  const selectedBlockId = useStore((s) => s.selectedBlockId);
+  const selectedBlockIds = useStore((s) => s.selectedBlockIds);
   const resume = useCurrentResume();
-  if (!selectedBlockId || !resume) return null;
+  if (selectedBlockIds.length !== 1 || !resume) return null;
+  const id = selectedBlockIds[0]!;
   for (const p of resume.pages) {
-    const b = p.blocks.find((x) => x.id === selectedBlockId);
+    const b = p.blocks.find((x) => x.id === id);
     if (b) return { block: b, pageId: p.id };
   }
   return null;
+};
+export const useIsBlockSelected = (id: string) =>
+  useStore((s) => s.selectedBlockIds.includes(id));
+export const useSelectionCount = () => useStore((s) => s.selectedBlockIds.length);
+export const useSelectionAnchorId = () => useStore((s) => s.selectedBlockIds.at(-1) ?? null);
+/** Whether the current multi-selection can move up/down as a cohesive group.
+ *  Returns `null` when fewer than 2 blocks are selected — callers should fall
+ *  back to their existing per-block canUp/canDown calculation in that case. */
+export const useSelectionMoveCaps = (): { canUp: boolean; canDown: boolean } | null => {
+  const ids = useStore((s) => s.selectedBlockIds);
+  const resume = useCurrentResume();
+  if (ids.length < 2 || !resume) return null;
+  const flat = flattenBlocks(resume);
+  const set = new Set(ids);
+  const positions = flat
+    .map((x, i) => ({ ...x, flatIdx: i }))
+    .filter((x) => set.has(x.id));
+  if (positions.length === 0) return { canUp: false, canDown: false };
+  const first = positions[0]!;
+  const last = positions[positions.length - 1]!;
+  return {
+    canUp: !(first.pageIdx === 0 && first.blockIdx === 0),
+    canDown: !(
+      last.pageIdx === resume.pages.length - 1 &&
+      last.blockIdx === resume.pages[last.pageIdx]!.blocks.length - 1
+    ),
+  };
 };

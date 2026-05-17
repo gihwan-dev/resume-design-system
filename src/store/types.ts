@@ -26,6 +26,6 @@ export interface Resume {
 export interface AppState {
   schemaVersion: number;
   currentResumeId: string;
-  selectedBlockId: string | null;
+  selectedBlockIds: string[];
   resumes: Record<string, Resume>;
 }

@@ -7,7 +7,7 @@ function legacy(blocks: Block[]): AppState {
   return {
     schemaVersion: 1,
     currentResumeId: 'r1',
-    selectedBlockId: null,
+    selectedBlockIds: [],
     resumes: {
       r1: {
         id: 'r1',
@@ -67,7 +67,7 @@ describe('migrateAppState — linkRow absorption', () => {
     const state: AppState = {
       schemaVersion: 1,
       currentResumeId: 'r1',
-      selectedBlockId: null,
+      selectedBlockIds: [],
       resumes: {
         r1: {
           id: 'r1',

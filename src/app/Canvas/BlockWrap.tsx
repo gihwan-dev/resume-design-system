@@ -1,5 +1,10 @@
 import { useState, type ReactNode, type RefCallback } from 'react';
-import { useStore, useActions } from '../../store/store';
+import {
+  useActions,
+  useIsBlockSelected,
+  useSelectionAnchorId,
+  useSelectionCount,
+} from '../../store/store';
 import { getBlock } from '../../blocks';
 
 export function BlockWrap({
@@ -17,10 +22,21 @@ export function BlockWrap({
   canDown: boolean;
   children: ReactNode;
 }) {
-  const selected = useStore((s) => s.selectedBlockId === blockId);
+  const selected = useIsBlockSelected(blockId);
+  const anchorId = useSelectionAnchorId();
+  const selectionCount = useSelectionCount();
+  const isAnchor = anchorId === blockId;
+  const isMulti = selectionCount > 1;
   const [hover, setHover] = useState(false);
-  const { selectBlock, moveBlockBy } = useActions();
+  const { selectBlock, toggleBlockSelection, selectBlockRange, moveBlockBy, moveBlocksBy } =
+    useActions();
   const def = getBlock(blockType);
+
+  const handleMove = (delta: -1 | 1) => {
+    if (isMulti) moveBlocksBy(delta);
+    else moveBlockBy(blockId, delta);
+  };
+
   return (
     <div
       ref={hostRef}
@@ -30,30 +46,35 @@ export function BlockWrap({
       onMouseLeave={() => setHover(false)}
       onClick={(e) => {
         e.stopPropagation();
-        selectBlock(blockId);
+        if (e.shiftKey) selectBlockRange(blockId);
+        else if (e.metaKey || e.ctrlKey) toggleBlockSelection(blockId);
+        else selectBlock(blockId);
       }}
     >
       <div className="bb-label" data-print="hide">
         {def?.label ?? blockType}
+        {isMulti && isAnchor ? ` · ${selectionCount}개 선택됨` : ''}
       </div>
-      <div className="bb-actions" data-print="hide" onClick={(e) => e.stopPropagation()}>
-        <button
-          className="bb-action"
-          title="위로"
-          disabled={!canUp}
-          onClick={() => moveBlockBy(blockId, -1)}
-        >
-          ↑
-        </button>
-        <button
-          className="bb-action"
-          title="아래로"
-          disabled={!canDown}
-          onClick={() => moveBlockBy(blockId, 1)}
-        >
-          ↓
-        </button>
-      </div>
+      {(!isMulti || isAnchor) && (
+        <div className="bb-actions" data-print="hide" onClick={(e) => e.stopPropagation()}>
+          <button
+            className="bb-action"
+            title={isMulti ? '선택 블록 위로' : '위로'}
+            disabled={!canUp}
+            onClick={() => handleMove(-1)}
+          >
+            ↑
+          </button>
+          <button
+            className="bb-action"
+            title={isMulti ? '선택 블록 아래로' : '아래로'}
+            disabled={!canDown}
+            onClick={() => handleMove(1)}
+          >
+            ↓
+          </button>
+        </div>
+      )}
       {children}
     </div>
   );

@@ -17,6 +17,7 @@ const ALL_TYPES = [
   'learningNote',
   'education',
   'freeText',
+  'blogPosts',
   'divider',
   'spacer',
 ];
@@ -57,6 +58,46 @@ describe('block registry', () => {
       const out = render(<FT data={{ text: 'line1\nline2' }} />);
       expect(out.container.textContent).toContain('line1\nline2');
     }
+  });
+
+  it('blogPosts renders title and note for each item', () => {
+    const def = getBlock('blogPosts');
+    expect(def).toBeDefined();
+    if (!def) return;
+    const Render = def.Render;
+    const { container } = render(
+      <Render
+        data={{
+          items: [
+            {
+              href: 'https://obsidian.gihwan-dev.com/50-Blog/추상화란',
+              title: '추상화란 무엇인가',
+              note: '설계 관점에서 본 추상화 정리',
+            },
+          ],
+        }}
+      />,
+    );
+    expect(container.textContent).toContain('추상화란 무엇인가');
+    expect(container.textContent).toContain('설계 관점에서 본 추상화 정리');
+  });
+
+  it('blogPosts falls back to href when title is empty', () => {
+    const def = getBlock('blogPosts');
+    if (!def) return;
+    const Render = def.Render;
+    const { container } = render(
+      <Render data={{ items: [{ href: 'https://example.com/post', title: '' }] }} />,
+    );
+    expect(container.textContent).toContain('https://example.com/post');
+  });
+
+  it('blogPosts renders nothing when items array is empty', () => {
+    const def = getBlock('blogPosts');
+    if (!def) return;
+    const Render = def.Render;
+    const { container } = render(<Render data={{ items: [] }} />);
+    expect(container.firstChild).toBeNull();
   });
 
   it('caseStudyHeader links chip absorbs pre-migration { label, href } as alias', () => {

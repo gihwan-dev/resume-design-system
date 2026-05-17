@@ -472,6 +472,64 @@ export const resumeGlobalStyles = css`
     color: var(--text-faint);
   }
 
+  /* ── Blog Posts ──────────────────────────────────────────────── */
+  .rs-blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rs-blog-row {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    column-gap: 10px;
+    align-items: start;
+    color: inherit;
+    text-decoration: none;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .rs-blog-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    color: var(--text-muted);
+    flex: 0 0 auto;
+  }
+  .rs-blog-icon > img,
+  .rs-blog-icon > svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+  .rs-blog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .rs-blog-title {
+    font-family: var(--font-sans);
+    font-size: var(--fs-project);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    letter-spacing: var(--tr-tight);
+    line-height: var(--lh-snug);
+  }
+  .rs-blog-note {
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
+    color: var(--text-muted);
+    line-height: var(--lh-normal);
+    letter-spacing: var(--tr-tight);
+  }
+  .rs-blog-row:hover .rs-blog-title {
+    color: var(--accent-primary);
+  }
+
   /* ── Case Study helpers ──────────────────────────────────────── */
   .rs-case-meta-sep {
     margin: 0 6px;

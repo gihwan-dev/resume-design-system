@@ -20,6 +20,7 @@ import './skills';
 import './learningNote';
 import './education';
 import './freeText';
+import './blogPosts';
 import './divider';
 import './spacer';
 

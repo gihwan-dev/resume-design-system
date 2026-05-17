@@ -91,21 +91,18 @@ export const resumeGlobalStyles = css`
     word-break: keep-all;
     white-space: pre-line;
   }
-  /* Inline bullets produced by rtBlock() when a line starts with "- " or "* ".
-     Uses native list markers so wrapped text always aligns under the first
-     character — no absolute-positioned glyph that can collide with text. */
+  /* Lines starting with "- " / "* " in rtBlock() — rendered as a clean
+     vertical stack with no visible marker. Indentation is dropped so
+     wrapped text aligns flush with surrounding body copy. */
   .rs-rt-bullets {
-    list-style: disc outside;
-    padding: 0 0 0 18px;
-    margin: 2px 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
   .rs-rt-bullet-item {
     margin: 0;
     padding: 0;
     white-space: normal;
-  }
-  .rs-rt-bullet-item::marker {
-    color: var(--text-faint);
   }
   .rs-emphasis {
     font-family: var(--font-sans);

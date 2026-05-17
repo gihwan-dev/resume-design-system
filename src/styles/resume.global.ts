@@ -91,6 +91,30 @@ export const resumeGlobalStyles = css`
     word-break: keep-all;
     white-space: pre-line;
   }
+  /* Inline bullets produced by rtBlock() when a line starts with "- " or "* ".
+     Kept tight: shares the body font, hangs a small marker so wrapped text
+     aligns under the first character. */
+  .rs-rt-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 2px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .rs-rt-bullet-item {
+    position: relative;
+    padding-left: 12px;
+    white-space: normal;
+  }
+  .rs-rt-bullet-item::before {
+    content: '•';
+    position: absolute;
+    left: 2px;
+    top: 0;
+    color: var(--text-faint);
+    line-height: var(--lh-body);
+  }
   .rs-emphasis {
     font-family: var(--font-sans);
     font-size: var(--fs-emphasis);

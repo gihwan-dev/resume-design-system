@@ -1,6 +1,6 @@
 import type { ChangeEvent, ReactNode } from 'react';
 
-export const RT_HINT = '**강조** · ==수치== · `mono`';
+export const RT_HINT = '**강조** · ==수치== · `mono` · 줄머리 `- ` 불릿';
 
 export function Field({
   label,

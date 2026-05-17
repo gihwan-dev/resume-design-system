@@ -1,4 +1,4 @@
-import { rt } from '../../rich-text/parse';
+import { rtBlock } from '../../rich-text/parse';
 import type { ParData } from './types';
 
 export function ParBlock({ data }: { data: ParData }) {
@@ -8,13 +8,13 @@ export function ParBlock({ data }: { data: ParData }) {
       {label && <div className="rs-par-label">{label}</div>}
       <dl className="rs-par">
         {problem && <dt className="rs-par-key">PROBLEM</dt>}
-        {problem && <dd className="rs-par-val rs-body">{rt(problem)}</dd>}
+        {problem && <dd className="rs-par-val rs-body">{rtBlock(problem)}</dd>}
         {action && <dt className="rs-par-key">ACTION</dt>}
-        {action && <dd className="rs-par-val rs-body">{rt(action)}</dd>}
+        {action && <dd className="rs-par-val rs-body">{rtBlock(action)}</dd>}
         {result && <dt className="rs-par-key">RESULT</dt>}
-        {result && <dd className="rs-par-val rs-body">{rt(result)}</dd>}
+        {result && <dd className="rs-par-val rs-body">{rtBlock(result)}</dd>}
         {learning && <dt className="rs-par-key">LEARNING</dt>}
-        {learning && <dd className="rs-par-val rs-learning">{rt(learning)}</dd>}
+        {learning && <dd className="rs-par-val rs-learning">{rtBlock(learning)}</dd>}
       </dl>
     </div>
   );

@@ -68,3 +68,64 @@ export function rt(text: string | undefined | null): ReactNode {
   if (!text) return null;
   return renderFragment(text, 'rt_');
 }
+
+const BULLET_RE = /^\s*[-*]\s+(.*)$/;
+
+/**
+ * Block-aware rich-text renderer. Detects line-leading `- ` / `* ` markers
+ * and wraps consecutive bullet lines into a <ul>. Non-bullet lines are
+ * grouped into a single block that relies on the parent's `white-space:
+ * pre-line` to preserve newlines.
+ *
+ * Inline markers from rt() (`**bold**`, `==metric==`, `` `mono` ``) still
+ * apply within each line.
+ */
+export function rtBlock(text: string | undefined | null): ReactNode {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const groups: Array<{ kind: 'bullet' | 'text'; lines: string[] }> = [];
+  for (const line of lines) {
+    const isBullet = BULLET_RE.test(line);
+    const last = groups[groups.length - 1];
+    if (last && ((isBullet && last.kind === 'bullet') || (!isBullet && last.kind === 'text'))) {
+      last.lines.push(line);
+    } else {
+      groups.push({ kind: isBullet ? 'bullet' : 'text', lines: [line] });
+    }
+  }
+
+  const out: ReactNode[] = [];
+  groups.forEach((g, gi) => {
+    if (g.kind === 'bullet') {
+      out.push(
+        createElement(
+          'ul',
+          { key: `rtb_u${gi}`, className: 'rs-rt-bullets' },
+          g.lines.map((l, li) => {
+            const m = l.match(BULLET_RE);
+            const content = m ? m[1] ?? '' : l;
+            return createElement(
+              'li',
+              { key: `rtb_u${gi}_${li}`, className: 'rs-rt-bullet-item' },
+              renderFragment(content, `rtb_u${gi}_${li}_`),
+            );
+          }),
+        ),
+      );
+    } else {
+      // Collapse leading/trailing empty lines around bullet groups so the
+      // user's newline before "- foo" doesn't produce an awkward gap.
+      const trimmed =
+        gi === 0 || gi === groups.length - 1
+          ? g.lines.filter((l, idx, arr) => !(l.trim() === '' && (idx === 0 || idx === arr.length - 1)))
+          : g.lines;
+      if (trimmed.length === 0) return;
+      const joined = trimmed.join('\n');
+      out.push(
+        createElement(Fragment, { key: `rtb_t${gi}` }, renderFragment(joined, `rtb_t${gi}_`)),
+      );
+    }
+  });
+
+  return out;
+}

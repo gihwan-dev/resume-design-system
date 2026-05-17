@@ -68,8 +68,7 @@ function OutlineRow({
   const isMulti = selectionCount > 1;
   const showMoveButtons = !isMulti || isAnchor;
   const effectiveCanUp = isMulti && isAnchor && selectionCaps ? selectionCaps.canUp : canUp;
-  const effectiveCanDown =
-    isMulti && isAnchor && selectionCaps ? selectionCaps.canDown : canDown;
+  const effectiveCanDown = isMulti && isAnchor && selectionCaps ? selectionCaps.canDown : canDown;
   const {
     selectBlock,
     toggleBlockSelection,

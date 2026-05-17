@@ -154,9 +154,7 @@ export function CanvasPage({
               // group-wide caps there instead of this block's local position.
               const useGroupCaps = selectionCaps != null && anchorId === block.id;
               const canUp = useGroupCaps ? selectionCaps.canUp : !isFirstOnPage || hasPrevPage;
-              const canDown = useGroupCaps
-                ? selectionCaps.canDown
-                : !isLastOnPage || hasNextPage;
+              const canDown = useGroupCaps ? selectionCaps.canDown : !isLastOnPage || hasNextPage;
               return (
                 <BlockWrap
                   key={block.id}

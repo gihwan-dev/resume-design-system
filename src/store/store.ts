@@ -535,8 +535,7 @@ export const useSelectedBlock = () => {
   }
   return null;
 };
-export const useIsBlockSelected = (id: string) =>
-  useStore((s) => s.selectedBlockIds.includes(id));
+export const useIsBlockSelected = (id: string) => useStore((s) => s.selectedBlockIds.includes(id));
 export const useSelectionCount = () => useStore((s) => s.selectedBlockIds.length);
 export const useSelectionAnchorId = () => useStore((s) => s.selectedBlockIds.at(-1) ?? null);
 /** Whether the current multi-selection can move up/down as a cohesive group.
@@ -548,9 +547,7 @@ export const useSelectionMoveCaps = (): { canUp: boolean; canDown: boolean } | n
   if (ids.length < 2 || !resume) return null;
   const flat = flattenBlocks(resume);
   const set = new Set(ids);
-  const positions = flat
-    .map((x, i) => ({ ...x, flatIdx: i }))
-    .filter((x) => set.has(x.id));
+  const positions = flat.map((x, i) => ({ ...x, flatIdx: i })).filter((x) => set.has(x.id));
   if (positions.length === 0) return { canUp: false, canDown: false };
   const first = positions[0]!;
   const last = positions[positions.length - 1]!;

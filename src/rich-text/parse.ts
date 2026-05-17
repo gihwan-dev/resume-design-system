@@ -103,7 +103,7 @@ export function rtBlock(text: string | undefined | null): ReactNode {
           { key: `rtb_u${gi}`, className: 'rs-rt-bullets' },
           g.lines.map((l, li) => {
             const m = l.match(BULLET_RE);
-            const content = m ? m[1] ?? '' : l;
+            const content = m ? (m[1] ?? '') : l;
             return createElement(
               'li',
               { key: `rtb_u${gi}_${li}`, className: 'rs-rt-bullet-item' },
@@ -117,7 +117,9 @@ export function rtBlock(text: string | undefined | null): ReactNode {
       // user's newline before "- foo" doesn't produce an awkward gap.
       const trimmed =
         gi === 0 || gi === groups.length - 1
-          ? g.lines.filter((l, idx, arr) => !(l.trim() === '' && (idx === 0 || idx === arr.length - 1)))
+          ? g.lines.filter(
+              (l, idx, arr) => !(l.trim() === '' && (idx === 0 || idx === arr.length - 1)),
+            )
           : g.lines;
       if (trimmed.length === 0) return;
       const joined = trimmed.join('\n');

@@ -306,7 +306,7 @@ export const useStore = create<Store>()(
           }
           s.resumes[resume.id] = resume;
           s.currentResumeId = resume.id;
-          s.selectedBlockId = null;
+          s.selectedBlockIds = [];
           newId = resume.id;
         });
         return newId;

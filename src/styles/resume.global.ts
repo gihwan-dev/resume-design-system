@@ -92,28 +92,20 @@ export const resumeGlobalStyles = css`
     white-space: pre-line;
   }
   /* Inline bullets produced by rtBlock() when a line starts with "- " or "* ".
-     Kept tight: shares the body font, hangs a small marker so wrapped text
-     aligns under the first character. */
+     Uses native list markers so wrapped text always aligns under the first
+     character — no absolute-positioned glyph that can collide with text. */
   .rs-rt-bullets {
-    list-style: none;
-    padding: 0;
+    list-style: disc outside;
+    padding: 0 0 0 18px;
     margin: 2px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
   }
   .rs-rt-bullet-item {
-    position: relative;
-    padding-left: 12px;
+    margin: 0;
+    padding: 0;
     white-space: normal;
   }
-  .rs-rt-bullet-item::before {
-    content: '•';
-    position: absolute;
-    left: 2px;
-    top: 0;
+  .rs-rt-bullet-item::marker {
     color: var(--text-faint);
-    line-height: var(--lh-body);
   }
   .rs-emphasis {
     font-family: var(--font-sans);

@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { getBlock, listBlockTypes, shortLabelFor } from '../blocks';
-import { useActions, useCurrentResume, useStore } from '../store/store';
+import {
+  useActions,
+  useCurrentResume,
+  useIsBlockSelected,
+  useSelectionAnchorId,
+  useSelectionCount,
+  useSelectionMoveCaps,
+} from '../store/store';
 
 function PaletteItem({ type }: { type: string }) {
   const def = getBlock(type);
@@ -53,45 +60,74 @@ function OutlineRow({
   canUp: boolean;
   canDown: boolean;
 }) {
-  const selected = useStore((s) => s.selectedBlockId === blockId);
-  const { selectBlock, removeBlock, duplicateBlock, moveBlockBy } = useActions();
+  const selected = useIsBlockSelected(blockId);
+  const anchorId = useSelectionAnchorId();
+  const selectionCount = useSelectionCount();
+  const selectionCaps = useSelectionMoveCaps();
+  const isAnchor = anchorId === blockId;
+  const isMulti = selectionCount > 1;
+  const showMoveButtons = !isMulti || isAnchor;
+  const effectiveCanUp = isMulti && isAnchor && selectionCaps ? selectionCaps.canUp : canUp;
+  const effectiveCanDown =
+    isMulti && isAnchor && selectionCaps ? selectionCaps.canDown : canDown;
+  const {
+    selectBlock,
+    toggleBlockSelection,
+    selectBlockRange,
+    removeBlock,
+    duplicateBlock,
+    moveBlockBy,
+    moveBlocksBy,
+  } = useActions();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `block:${blockId}`,
     data: { kind: 'block', blockId },
   });
+  const handleMove = (delta: -1 | 1) => {
+    if (isMulti) moveBlocksBy(delta);
+    else moveBlockBy(blockId, delta);
+  };
   return (
     <div
       ref={setNodeRef}
       className={'outline-row' + (selected ? ' is-selected' : '')}
       style={{ opacity: isDragging ? 0.4 : 1 }}
-      onClick={() => selectBlock(blockId)}
+      onClick={(e) => {
+        if (e.shiftKey) selectBlockRange(blockId);
+        else if (e.metaKey || e.ctrlKey) toggleBlockSelection(blockId);
+        else selectBlock(blockId);
+      }}
       {...listeners}
       {...attributes}
     >
       <span className="ord">{String(ord + 1).padStart(2, '0')}</span>
       <span className="label">{shortLabelFor(blockType, data)}</span>
-      <button
-        className="icon-btn"
-        title="위로"
-        disabled={!canUp}
-        onClick={(e) => {
-          e.stopPropagation();
-          moveBlockBy(blockId, -1);
-        }}
-      >
-        ↑
-      </button>
-      <button
-        className="icon-btn"
-        title="아래로"
-        disabled={!canDown}
-        onClick={(e) => {
-          e.stopPropagation();
-          moveBlockBy(blockId, 1);
-        }}
-      >
-        ↓
-      </button>
+      {showMoveButtons && (
+        <>
+          <button
+            className="icon-btn"
+            title={isMulti ? '선택 블록 위로' : '위로'}
+            disabled={!effectiveCanUp}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMove(-1);
+            }}
+          >
+            ↑
+          </button>
+          <button
+            className="icon-btn"
+            title={isMulti ? '선택 블록 아래로' : '아래로'}
+            disabled={!effectiveCanDown}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMove(1);
+            }}
+          >
+            ↓
+          </button>
+        </>
+      )}
       <button
         className="icon-btn"
         title="복제"

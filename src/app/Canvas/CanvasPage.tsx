@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import type { Page } from '../../store/types';
-import { useActions } from '../../store/store';
+import { useActions, useSelectionAnchorId, useSelectionMoveCaps } from '../../store/store';
 import { getBlock } from '../../blocks';
 import { BlockWrap } from './BlockWrap';
 
@@ -21,6 +21,8 @@ export function CanvasPage({
   hasPrevPage: boolean;
 }) {
   const { addPage, removePage, movePage } = useActions();
+  const anchorId = useSelectionAnchorId();
+  const selectionCaps = useSelectionMoveCaps();
   const pageRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const blockRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -147,13 +149,21 @@ export function CanvasPage({
               const Render = def.Render;
               const isFirstOnPage = idx === 0;
               const isLastOnPage = idx === page.blocks.length - 1;
+              // When multiple blocks are selected, the move buttons render only
+              // on the anchor block and act on the whole group — so use the
+              // group-wide caps there instead of this block's local position.
+              const useGroupCaps = selectionCaps != null && anchorId === block.id;
+              const canUp = useGroupCaps ? selectionCaps.canUp : !isFirstOnPage || hasPrevPage;
+              const canDown = useGroupCaps
+                ? selectionCaps.canDown
+                : !isLastOnPage || hasNextPage;
               return (
                 <BlockWrap
                   key={block.id}
                   blockId={block.id}
                   blockType={block.type}
-                  canUp={!isFirstOnPage || hasPrevPage}
-                  canDown={!isLastOnPage || hasNextPage}
+                  canUp={canUp}
+                  canDown={canDown}
                   hostRef={(el) => {
                     blockRefs.current[block.id] = el;
                   }}

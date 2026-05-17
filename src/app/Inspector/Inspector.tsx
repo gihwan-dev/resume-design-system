@@ -1,9 +1,16 @@
-import { useActions, useCurrentResume, useSelectedBlock, useStore } from '../../store/store';
+import {
+  useActions,
+  useCurrentResume,
+  useSelectedBlock,
+  useSelectionCount,
+  useStore,
+} from '../../store/store';
 import { getBlock } from '../../blocks';
 import { THEMES, type ThemeName } from '../../theme/themes';
 
 export function Inspector() {
   const sel = useSelectedBlock();
+  const selectionCount = useSelectionCount();
   const resume = useCurrentResume();
   const { updateBlock, removeBlock, duplicateBlock, setResumeTheme } = useActions();
   const currentResumeId = useStore((s) => s.currentResumeId);
@@ -30,9 +37,21 @@ export function Inspector() {
           </div>
         </div>
         <div className="empty-state" style={{ marginTop: 24 }}>
-          캔버스에서 블록을 클릭하면
-          <br />
-          여기서 편집할 수 있어요.
+          {selectionCount >= 2 ? (
+            <>
+              {selectionCount}개 블록 선택됨
+              <br />
+              일괄 편집은 지원하지 않습니다.
+              <br />
+              단일 선택 시 편집할 수 있어요.
+            </>
+          ) : (
+            <>
+              캔버스에서 블록을 클릭하면
+              <br />
+              여기서 편집할 수 있어요.
+            </>
+          )}
         </div>
       </div>
     );

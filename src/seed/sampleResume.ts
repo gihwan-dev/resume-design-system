@@ -95,7 +95,7 @@ export function seedAppState(): AppState {
   return {
     schemaVersion: 1,
     currentResumeId: resumeId,
-    selectedBlockId: null,
+    selectedBlockIds: [],
     resumes: { [resumeId]: resume },
   };
 }

@@ -1,4 +1,5 @@
 import { useState, type ReactNode, type RefCallback } from 'react';
+import { useDraggable } from '@dnd-kit/core';
 import {
   useActions,
   useIsBlockSelected,
@@ -31,16 +32,30 @@ export function BlockWrap({
   const { selectBlock, toggleBlockSelection, selectBlockRange, moveBlockBy, moveBlocksBy } =
     useActions();
   const def = getBlock(blockType);
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `canvas-block:${blockId}`,
+    data: { kind: 'block', blockId },
+  });
 
   const handleMove = (delta: -1 | 1) => {
     if (isMulti) moveBlocksBy(delta);
     else moveBlockBy(blockId, delta);
   };
 
+  const handleRef = (el: HTMLDivElement | null) => {
+    setNodeRef(el);
+    hostRef(el);
+  };
+
   return (
     <div
-      ref={hostRef}
-      className={'bb-wrap' + (selected ? ' is-selected' : '') + (hover ? ' is-hover' : '')}
+      ref={handleRef}
+      className={
+        'bb-wrap' +
+        (selected ? ' is-selected' : '') +
+        (hover ? ' is-hover' : '') +
+        (isDragging ? ' is-dragging' : '')
+      }
       data-block-id={blockId}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -50,6 +65,8 @@ export function BlockWrap({
         else if (e.metaKey || e.ctrlKey) toggleBlockSelection(blockId);
         else selectBlock(blockId);
       }}
+      {...listeners}
+      {...attributes}
     >
       <div className="bb-label" data-print="hide">
         {def?.label ?? blockType}

@@ -1,9 +1,42 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import { useDroppable } from '@dnd-kit/core';
+import { Fragment, useLayoutEffect, useRef, useState } from 'react';
+import { useDndContext, useDroppable } from '@dnd-kit/core';
 import type { Page } from '../../store/types';
 import { useActions, useSelectionAnchorId, useSelectionMoveCaps } from '../../store/store';
 import { getBlock } from '../../blocks';
 import { BlockWrap } from './BlockWrap';
+
+function DropSlot({
+  pageId,
+  index,
+  prevBlockId,
+  nextBlockId,
+}: {
+  pageId: string;
+  index: number;
+  prevBlockId?: string;
+  nextBlockId?: string;
+}) {
+  const { active } = useDndContext();
+  const activeId = typeof active?.id === 'string' ? active.id : null;
+  let isAdjacentToSelf = false;
+  if (activeId && activeId.startsWith('canvas-block:')) {
+    const draggedId = activeId.slice('canvas-block:'.length);
+    isAdjacentToSelf = draggedId === prevBlockId || draggedId === nextBlockId;
+  }
+  const { isOver, setNodeRef } = useDroppable({
+    id: `slot:${pageId}:${index}`,
+    data: { kind: 'slot', pageId, index },
+    disabled: isAdjacentToSelf,
+  });
+  return (
+    <div
+      ref={isAdjacentToSelf ? null : setNodeRef}
+      className={'drop-slot' + (isOver && !isAdjacentToSelf ? ' is-over' : '')}
+      data-print="hide"
+      aria-hidden
+    />
+  );
+}
 
 export function CanvasPage({
   page,
@@ -131,17 +164,20 @@ export function CanvasPage({
       >
         <div ref={innerRef}>
           {page.blocks.length === 0 ? (
-            <div
-              style={{
-                padding: '40px 0',
-                textAlign: 'center',
-                color: 'var(--text-faint)',
-                fontSize: 13,
-              }}
-              data-print="hide"
-            >
-              컴포넌트를 드래그해서 이 페이지에 추가하세요.
-            </div>
+            <>
+              <DropSlot pageId={page.id} index={0} />
+              <div
+                style={{
+                  padding: '40px 0',
+                  textAlign: 'center',
+                  color: 'var(--text-faint)',
+                  fontSize: 13,
+                }}
+                data-print="hide"
+              >
+                컴포넌트를 드래그해서 이 페이지에 추가하세요.
+              </div>
+            </>
           ) : (
             page.blocks.map((block, idx) => {
               const def = getBlock(block.type);
@@ -155,19 +191,30 @@ export function CanvasPage({
               const useGroupCaps = selectionCaps != null && anchorId === block.id;
               const canUp = useGroupCaps ? selectionCaps.canUp : !isFirstOnPage || hasPrevPage;
               const canDown = useGroupCaps ? selectionCaps.canDown : !isLastOnPage || hasNextPage;
+              const prevBlock = page.blocks[idx - 1];
               return (
-                <BlockWrap
-                  key={block.id}
-                  blockId={block.id}
-                  blockType={block.type}
-                  canUp={canUp}
-                  canDown={canDown}
-                  hostRef={(el) => {
-                    blockRefs.current[block.id] = el;
-                  }}
-                >
-                  <Render data={block.data} />
-                </BlockWrap>
+                <Fragment key={block.id}>
+                  <DropSlot
+                    pageId={page.id}
+                    index={idx}
+                    prevBlockId={prevBlock?.id}
+                    nextBlockId={block.id}
+                  />
+                  <BlockWrap
+                    blockId={block.id}
+                    blockType={block.type}
+                    canUp={canUp}
+                    canDown={canDown}
+                    hostRef={(el) => {
+                      blockRefs.current[block.id] = el;
+                    }}
+                  >
+                    <Render data={block.data} />
+                  </BlockWrap>
+                  {isLastOnPage && (
+                    <DropSlot pageId={page.id} index={page.blocks.length} prevBlockId={block.id} />
+                  )}
+                </Fragment>
               );
             })
           )}

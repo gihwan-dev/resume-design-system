@@ -39,13 +39,28 @@ export function AppShell() {
       const { active, over } = event;
       if (!over) return;
       const a = active.data.current as { kind: string; blockType?: string; blockId?: string };
-      const o = over.data.current as { kind: string; pageId?: string };
-      if (o.kind !== 'page' || !o.pageId) return;
+      const o = over.data.current as { kind: string; pageId?: string; index?: number };
+      if (!o.pageId) return;
 
-      if (a.kind === 'palette' && a.blockType) {
-        addBlock({ pageId: o.pageId, blockType: a.blockType as BlockType });
-      } else if (a.kind === 'block' && a.blockId) {
-        moveBlock({ blockId: a.blockId, toPageId: o.pageId });
+      if (o.kind === 'slot') {
+        if (a.kind === 'palette' && a.blockType) {
+          addBlock({
+            pageId: o.pageId,
+            blockType: a.blockType as BlockType,
+            index: o.index,
+          });
+        } else if (a.kind === 'block' && a.blockId) {
+          moveBlock({ blockId: a.blockId, toPageId: o.pageId, toIndex: o.index });
+        }
+        return;
+      }
+
+      if (o.kind === 'page') {
+        if (a.kind === 'palette' && a.blockType) {
+          addBlock({ pageId: o.pageId, blockType: a.blockType as BlockType });
+        } else if (a.kind === 'block' && a.blockId) {
+          moveBlock({ blockId: a.blockId, toPageId: o.pageId });
+        }
       }
     },
     [addBlock, moveBlock],

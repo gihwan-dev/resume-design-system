@@ -704,6 +704,34 @@ export const chromeGlobalStyles = css`
   .drop-zone.is-over {
     background: var(--accent-soft);
   }
+  .drop-slot {
+    position: relative;
+    height: 6px;
+    margin: -3px 0;
+    z-index: 3;
+    pointer-events: auto;
+  }
+  .drop-slot::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 0;
+    background: var(--accent-primary);
+    border-radius: 2px;
+    transition:
+      height 80ms ease,
+      box-shadow 80ms ease;
+  }
+  .drop-slot.is-over::after {
+    height: 3px;
+    box-shadow: 0 0 0 2px var(--accent-soft);
+  }
+  .bb-wrap.is-dragging {
+    opacity: 0.4;
+  }
 
   /* ── Snapshots tray ──────────────────────────────────────────── */
   .snap-list {

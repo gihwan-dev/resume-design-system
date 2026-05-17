@@ -29,8 +29,15 @@ export function BlockWrap({
   const isAnchor = anchorId === blockId;
   const isMulti = selectionCount > 1;
   const [hover, setHover] = useState(false);
-  const { selectBlock, toggleBlockSelection, selectBlockRange, moveBlockBy, moveBlocksBy } =
-    useActions();
+  const {
+    selectBlock,
+    toggleBlockSelection,
+    selectBlockRange,
+    moveBlockBy,
+    moveBlocksBy,
+    removeBlock,
+    removeSelectedBlocks,
+  } = useActions();
   const def = getBlock(blockType);
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `canvas-block:${blockId}`,
@@ -89,6 +96,21 @@ export function BlockWrap({
             onClick={() => handleMove(1)}
           >
             ↓
+          </button>
+          <button
+            className="bb-action bb-action-danger"
+            title={isMulti ? `선택된 ${selectionCount}개 삭제` : '삭제'}
+            onClick={() => {
+              const msg = isMulti
+                ? `선택된 ${selectionCount}개 블록을 삭제할까요?`
+                : '이 블록을 삭제할까요?';
+              if (confirm(msg)) {
+                if (isMulti) removeSelectedBlocks();
+                else removeBlock(blockId);
+              }
+            }}
+          >
+            ×
           </button>
         </div>
       )}

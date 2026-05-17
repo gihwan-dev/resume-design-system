@@ -12,7 +12,8 @@ export function Inspector() {
   const sel = useSelectedBlock();
   const selectionCount = useSelectionCount();
   const resume = useCurrentResume();
-  const { updateBlock, removeBlock, duplicateBlock, setResumeTheme } = useActions();
+  const { updateBlock, removeBlock, removeSelectedBlocks, duplicateBlock, setResumeTheme } =
+    useActions();
   const currentResumeId = useStore((s) => s.currentResumeId);
 
   if (!sel) {
@@ -44,6 +45,18 @@ export function Inspector() {
               일괄 편집은 지원하지 않습니다.
               <br />
               단일 선택 시 편집할 수 있어요.
+              <div style={{ marginTop: 12 }}>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => {
+                    if (confirm(`선택된 ${selectionCount}개 블록을 삭제할까요?`)) {
+                      removeSelectedBlocks();
+                    }
+                  }}
+                >
+                  선택 {selectionCount}개 모두 삭제
+                </button>
+              </div>
             </>
           ) : (
             <>

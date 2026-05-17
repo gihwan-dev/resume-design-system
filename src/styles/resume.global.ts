@@ -515,13 +515,13 @@ export const resumeGlobalStyles = css`
   .rs-page dl {
     margin: 0;
   }
-  .rs-page ul {
+  .rs-page ul:not(.rs-rt-bullets) {
     padding-left: 14px;
   }
-  .rs-page li {
+  .rs-page li:not(.rs-rt-bullet-item) {
     padding-left: 2px;
   }
-  .rs-page li::marker {
+  .rs-page li:not(.rs-rt-bullet-item)::marker {
     color: var(--text-faint);
     font-size: 11px;
   }

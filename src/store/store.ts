@@ -29,6 +29,8 @@ export interface Actions {
 
   addBlock: (opts: { pageId?: string; blockType: BlockType; index?: number }) => string;
   removeBlock: (blockId: string) => void;
+  /** Remove every currently-selected block in one shot. No-op if selection is empty. */
+  removeSelectedBlocks: () => void;
   duplicateBlock: (blockId: string) => void;
   updateBlock: (blockId: string, data: Record<string, unknown>) => void;
   moveBlock: (opts: { blockId: string; toPageId: string; toIndex?: number }) => void;
@@ -389,6 +391,19 @@ export const useStore = create<Store>()(
             }
           }
           s.selectedBlockIds = s.selectedBlockIds.filter((id) => id !== blockId);
+          r.updatedAt = Date.now();
+        }),
+
+      removeSelectedBlocks: () =>
+        set((s) => {
+          const r = s.resumes[s.currentResumeId];
+          if (!r) return;
+          if (s.selectedBlockIds.length === 0) return;
+          const ids = new Set(s.selectedBlockIds);
+          for (const p of r.pages) {
+            p.blocks = p.blocks.filter((b) => !ids.has(b.id));
+          }
+          s.selectedBlockIds = [];
           r.updatedAt = Date.now();
         }),
 

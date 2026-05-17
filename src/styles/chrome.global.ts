@@ -568,6 +568,9 @@ export const chromeGlobalStyles = css`
   .bb-action:hover:not(:disabled) {
     filter: brightness(1.1);
   }
+  .bb-action-danger {
+    background: var(--chrome-danger);
+  }
 
   /* ── Inspector forms ─────────────────────────────────────────── */
   .field-group {

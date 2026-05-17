@@ -11,7 +11,7 @@ import { Topbar } from './Topbar';
 import { SidebarLeft } from './SidebarLeft';
 import { Canvas } from './Canvas/Canvas';
 import { Inspector } from './Inspector/Inspector';
-import { useActions, useCurrentResume } from '../store/store';
+import { useActions, useCurrentResume, useStore } from '../store/store';
 import { ThemeProvider } from '../theme/ThemeProvider';
 import type { BlockType } from '../blocks';
 
@@ -19,15 +19,28 @@ export function AppShell() {
   const [preview, setPreview] = useState(false);
   const resume = useCurrentResume();
   const themeName = resume?.theme ?? 'default';
-  const { addBlock, moveBlock } = useActions();
+  const { addBlock, moveBlock, removeSelectedBlocks } = useActions();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && preview) setPreview(false);
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        const t = e.target as HTMLElement | null;
+        const tag = t?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t?.isContentEditable) {
+          return;
+        }
+        const ids = useStore.getState().selectedBlockIds;
+        if (ids.length === 0) return;
+        e.preventDefault();
+        const msg =
+          ids.length === 1 ? '이 블록을 삭제할까요?' : `선택된 ${ids.length}개 블록을 삭제할까요?`;
+        if (confirm(msg)) removeSelectedBlocks();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [preview]);
+  }, [preview, removeSelectedBlocks]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

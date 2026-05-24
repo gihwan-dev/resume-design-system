@@ -54,7 +54,7 @@ export const defaultTheme: Theme = {
     bullet: '13.5px',
     emphasis: '13.5px',
     metric: '14px',
-    learning: '12.5px',
+    learning: '13.5px',
     link: '12.5px',
   },
   fontWeight: {

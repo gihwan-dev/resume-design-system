@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22.22.1'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -42,6 +42,9 @@ jobs:
       - name: Unit tests
         run: pnpm test:run
 
+      - name: Resume tool tests
+        run: pnpm test:resume
+
       - name: Build
         run: pnpm build
 
@@ -56,7 +59,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22.22.1'
           cache: 'pnpm'
 
       - name: Install dependencies

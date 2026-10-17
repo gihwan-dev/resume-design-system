@@ -1,0 +1,22 @@
+{
+  "v": 1,
+  "name": "가상 지원자 테스트 — 실제 경력 아님",
+  "theme": "mono",
+  "pages": [
+    {
+      "id": "p_fixture_1",
+      "blocks": [
+        { "id": "b_header", "type": "header", "data": { "name": "가상 지원자", "role": "Frontend Engineer", "tagline": "한글 인쇄 검증용 가상 문서", "contacts": ["test@example.com", "https://example.com"] } },
+        { "id": "b_intro", "type": "positioning", "data": { "text": "사용자가 편집한 첫 문장. 요청한 부분만 고칩니다." } },
+        { "id": "b_section", "type": "sectionHeader", "data": { "title": "가상 경력", "meta": "합성 데이터", "variant": "primary" } },
+        { "id": "b_career", "type": "careerHeader", "data": { "company": "가상 회사", "role": "프론트엔드", "period": "2025 — 2026", "summary": "실제 경력을 주장하지 않는 테스트" } },
+        { "id": "b_project", "type": "careerProject", "data": { "title": "가상 공통 UI", "period": "2025", "stack": "React · TypeScript" } },
+        { "id": "b_par", "type": "par", "data": { "label": "가상 사례", "problem": "예시 문제", "action": "예시 작업", "result": "", "learning": "" } },
+        { "id": "b_skills", "type": "skills", "data": { "rows": [{ "key": "도구", "val": "가상 예시" }] } },
+        { "id": "b_blog", "type": "blogPosts", "data": { "items": [{ "href": "https://example.com/ko", "title": "한글 링크 테스트", "note": "테스트 목적지" }] } },
+        { "id": "b_end", "type": "freeText", "data": { "text": "첫 페이지 끝 확인" } }
+      ]
+    },
+    { "id": "p_fixture_2", "blocks": [{ "id": "b_last", "type": "freeText", "data": { "text": "두 번째 페이지 — 순서와 한글 추출 확인" } }] }
+  ]
+}

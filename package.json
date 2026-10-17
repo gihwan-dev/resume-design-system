@@ -17,7 +17,9 @@
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "e2e": "playwright test",
-    "e2e:install": "playwright install --with-deps chromium"
+    "e2e:install": "playwright install --with-deps chromium",
+    "resume": "node skills/company-resume/scripts/resume-tool.mjs",
+    "test:resume": "node --test skills/company-resume/tests/tool.test.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

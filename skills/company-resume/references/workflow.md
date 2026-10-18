@@ -32,6 +32,8 @@ ClickUp/GitLab 조사를 요청받으면 실제 담당자, MR 작성자·병합 
 
 완성 원고에 설치된 `humanizer`를 적용해 명사 나열·모호한 표현·반복 구조를 다듬는다. 기술 용어는 보존하고 이력서의 격식체를 유지한다. 이후 문제 → 본인의 선택 → 구현/검증 결과가 읽히는지, 협업을 단독 성과로 넓히지 않았는지, 교정으로 새 사실이나 수치가 생기지 않았는지 검토한다. 교정 전후에 문제의 대상·제약, 선택 이유, 결과의 연결이 남아 있는지도 확인한다. 접속사를 줄이거나 문장을 짧게 만들기 위해 이 맥락을 없애지 않는다. 수정 전후와 근거 대조 결과는 비공개로 기록한다. 공개 배포는 사용자 지시가 있을 때만 하며 승인된 저장소·기존 배포 경로·필요 파일에 한정한다.
 
+`freeText`는 줄 앞의 `- `를 불릿으로 그리고, 공백 2칸 들여쓰기마다 한 단계 중첩한다. 불릿이 없는 줄은 제목 줄로 남는다. 블록은 쪽 사이에서 나뉘지 않으므로 긴 불릿 묶음은 항목 단위 블록으로 나눈다.
+
 실제 앱 registry 16개 타입은 `header`, `positioning`, `sectionHeader`, `coreImpact`, `careerHeader`, `careerProject`, `par`, `caseStudyHeader`, `caseStudyOutcome`, `skills`, `learningNote`, `education`, `freeText`, `blogPosts`, `divider`, `spacer`다. 타입별 필드는 `scripts/resume-schema.ts`와 대상 앱 `types.ts`를 확인한다. `theme`은 현재 `default`/`mono`다. 초안에서도 기본 예시 문구나 placeholder를 경력으로 채택하지 않는다. 필수 문자열은 빈 문자열로 둘 수 있지만 제출 준비 완료를 의미하지 않는다.
 
 ## 부분 수정 형식

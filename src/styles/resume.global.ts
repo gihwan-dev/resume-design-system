@@ -104,6 +104,31 @@ export const resumeGlobalStyles = css`
     padding: 0;
     white-space: normal;
   }
+  /* Indented "- " lines in freeText — nested bullet tree. */
+  .rs-tree-wrap {
+    white-space: normal;
+  }
+  .rs-tree-line + .rs-tree {
+    margin-top: 4px;
+  }
+  .rs-page ul.rs-tree {
+    margin: 0;
+    padding-left: 14px;
+    list-style: disc;
+  }
+  .rs-page ul.rs-tree--d1 {
+    list-style: circle;
+  }
+  /* Leaf lines (no nested list) read as details: same dash at any depth. */
+  .rs-page li.rs-tree-item:not(:has(> ul)) {
+    list-style-type: '– ';
+  }
+  .rs-tree-item + .rs-tree-item:has(> ul) {
+    margin-top: 6px;
+  }
+  .rs-tree-item > .rs-tree {
+    margin-top: 2px;
+  }
   .rs-emphasis {
     font-family: var(--font-sans);
     font-size: var(--fs-emphasis);

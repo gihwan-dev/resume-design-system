@@ -43,3 +43,19 @@ describe('rt — rich-text parser', () => {
     expect(classes).toEqual(expect.arrayContaining(['rs-stack', 'rs-num', 'rs-emphasis']));
   });
 });
+
+describe('rtTree — nested bullets', () => {
+  it('nests bullets by two-space indentation and keeps plain lines', async () => {
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    const { createElement, Fragment } = await import('react');
+    const { rtTree, hasBulletLines } = await import('../../src/rich-text/parse');
+    const text = '**제목**\n- 항목\n  - 이유\n  - 결과\n- 다음';
+    expect(hasBulletLines(text)).toBe(true);
+    expect(hasBulletLines('평범한 문장')).toBe(false);
+    const html = renderToStaticMarkup(createElement(Fragment, null, rtTree(text)));
+    expect(html).toContain('<div class="rs-tree-line"><span class="rs-emphasis">제목</span></div>');
+    expect(html).toContain(
+      '<ul class="rs-tree rs-tree--d0"><li class="rs-tree-item">항목<ul class="rs-tree rs-tree--d1"><li class="rs-tree-item">이유</li><li class="rs-tree-item">결과</li></ul></li><li class="rs-tree-item">다음</li></ul>',
+    );
+  });
+});

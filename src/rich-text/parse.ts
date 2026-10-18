@@ -131,3 +131,66 @@ export function rtBlock(text: string | undefined | null): ReactNode {
 
   return out;
 }
+
+const TREE_RE = /^( *)[-*]\s+(.*)$/;
+
+type TreeNode = { content: string; children: TreeNode[] };
+
+/** True when any line starts with a `- ` / `* ` marker (optionally indented). */
+export function hasBulletLines(text: string | undefined | null): boolean {
+  return !!text && text.split('\n').some((line) => TREE_RE.test(line));
+}
+
+function renderTree(nodes: TreeNode[], depth: number, key: string): ReactNode {
+  return createElement(
+    'ul',
+    { key, className: `rs-tree rs-tree--d${depth}` },
+    nodes.map((node, i) =>
+      createElement(
+        'li',
+        { key: `${key}_${i}`, className: 'rs-tree-item' },
+        renderFragment(node.content, `${key}_${i}_`),
+        node.children.length > 0 ? renderTree(node.children, depth + 1, `${key}_${i}c`) : null,
+      ),
+    ),
+  );
+}
+
+/**
+ * Nested bullet renderer for free-form blocks. Every two leading spaces before
+ * a `- ` marker add one nesting level; other lines render as plain lines.
+ */
+export function rtTree(text: string | undefined | null): ReactNode {
+  if (!text) return null;
+  const out: ReactNode[] = [];
+  let roots: TreeNode[] = [];
+  let stack: Array<{ level: number; children: TreeNode[] }> = [];
+  const flush = () => {
+    if (roots.length > 0) out.push(renderTree(roots, 0, `rtt_u${out.length}`));
+    roots = [];
+    stack = [];
+  };
+  for (const line of text.split('\n')) {
+    const m = line.match(TREE_RE);
+    if (!m) {
+      flush();
+      if (line.trim() !== '') {
+        out.push(
+          createElement(
+            'div',
+            { key: `rtt_t${out.length}`, className: 'rs-tree-line' },
+            renderFragment(line, `rtt_t${out.length}_`),
+          ),
+        );
+      }
+      continue;
+    }
+    const level = Math.floor((m[1] ?? '').length / 2);
+    const node: TreeNode = { content: m[2] ?? '', children: [] };
+    while (stack.length > 0 && stack[stack.length - 1]!.level >= level) stack.pop();
+    (stack.length > 0 ? stack[stack.length - 1]!.children : roots).push(node);
+    stack.push({ level, children: node.children });
+  }
+  flush();
+  return out;
+}

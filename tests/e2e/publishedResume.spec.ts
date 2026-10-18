@@ -9,7 +9,7 @@ test('published resume is read-only and preserves mobile readability without ini
   const page = await context.newPage();
   await page.goto('/resume/tossplace-platform');
   await expect(page.locator('.rs-name')).toHaveText('최기환');
-  await expect(page.locator('.rs-page')).toHaveCount(4);
+  await expect(page.locator('.rs-page')).toHaveCount(5);
   await expect(page.locator('.rs-blog-row')).toHaveCount(5);
   await expect(
     page.locator('.panel-left,.panel-right,textarea,[contenteditable="true"]'),

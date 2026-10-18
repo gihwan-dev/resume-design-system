@@ -44,7 +44,7 @@
               "**반복되는 구현을 구조로 묶습니다.** 22개 화면에 흩어진 테이블을 컴포넌트 하나로 통일했습니다.",
               "**재 보고 고칩니다.** 사내 테이블 엔진의 10,000행 검색 입력 렌더를 ==1.9초 → 0.06초==로 줄였습니다.",
               "**팀 규약을 도구로 만듭니다.** 화면 규약을 에이전트 스킬로 만들어, 누가 작업해도 같은 규약을 따르게 했습니다.",
-              "**혼자 맡은 코드도 안전하게 고칩니다.** 이전 세대 제품군에 최근 2년 MR ==250건==을 덮는 회귀 E2E를 붙였습니다.",
+              "**AI로 팀 단위 업무를 혼자 처리합니다.** 작년에 6명 넘게 나눠 맡던 이전 세대 제품 유지보수를, 리뷰·검증을 자동화한 하네스를 만들어 지금은 혼자 처리합니다.",
               "**다른 팀이 쓰는 도구를 만듭니다.** QA팀은 고객 지원에 사내 검색을, 기획팀은 프로토타이핑에 Design Studio를 씁니다."
             ]
           }
@@ -212,25 +212,44 @@
           "data": {
             "title": "MaxGauge 5 · 이전 세대 제품군 (Oracle · Tibero · SQL Server)",
             "period": "2025.01 - 현재",
-            "stack": "JavaScript · Vue · MSW · Playwright"
+            "stack": "JavaScript · ExtJS · Vue · Playwright · Claude Code · Codex"
           }
         },
         {
           "id": "b_64489296b7",
           "type": "freeText",
           "data": {
-            "text": "금융·공공·제조 고객사 20곳의 요청과 배포 버전을 처리해 왔고, 지금은 혼자 담당합니다."
+            "text": "금융·공공·제조 고객사 20곳의 요청과 배포 버전을 맡고 있습니다. 2025년 하반기에는 6명 넘게 나눠 처리하던 수정을 2026년 7월부터 혼자 처리하며, 그 흐름을 AI 유지보수 하네스로 만들었습니다."
           }
         },
         {
           "id": "b_545e6a7674",
           "type": "freeText",
           "data": {
-            "text": "- **회귀 E2E 하네스**\n  - 화면 하나를 확인하려 해도 Java 서버까지 띄워야 해서, 혼자 고치는 코드를 검증하기 어려웠음\n  - 실제 DB 스키마를 본뜬 mock DB로 Java 서버 없이 브라우저 E2E를 돌리는 하네스를 만듦\n  - 최근 2년간 병합된 MR 250건을 모두 회귀 테스트로 덮음\n- **명령 하나로 로컬 풀스택**\n  - 라이선스와 인스턴스를 DB에 직접 넣던 기존 셋업은 서버 버전이 조금만 달라도 깨졌음\n  - 이 단계를 제품 UI 절차로 바꿈\n  - `pnpm run dev` 하나로 고객사 배포본 기준 8개 버전 조합을 띄우고 8개 시나리오를 모두 통과"
+            "text": "**AI 유지보수 하네스**\n- **반복 결함을 리뷰 스킬로**\n  - 레거시 수정에서 null 처리, 늦게 도착한 응답, Oracle/PostgreSQL 쌍 누락 같은 결함과 사이드 이펙트가 반복됐음\n  - 배포 브랜치의 커밋 315건과 리뷰 코멘트 881건을 전수 조사해, 자주 나온 문제를 8개 리뷰 관점으로 정리\n  - 관점마다 독립된 서브에이전트가 리뷰하고, 검증 에이전트가 확정한 결함만 고친 뒤 결함이 0건이 될 때까지 다시 리뷰\n  - 리뷰 기록이 없으면 MR 생성과 배포 패키징이 멈추게 함"
           }
         },
         {
-          "id": "b_317a15e0fd",
+          "id": "b_8f268296ec",
+          "type": "freeText",
+          "data": {
+            "text": "- **이미지만으로 리뷰하는 MR**\n  - 레거시 수정은 리뷰어가 코드를 읽거나 직접 화면을 띄워야 판단할 수 있었음\n  - 정상·경계·회귀 경로를 시나리오로 나누고, 시나리오마다 같은 조건의 수정 전·후 화면이 있어야 MR 본문이 만들어지게 함\n  - 리뷰어가 코드를 검증하거나 직접 띄워 보지 않고 이미지만 보고 리뷰·병합할 수 있게 됨\n- **의도 중심 수정과 회귀 테스트**\n  - MR 본문에는 바뀐 동작과 수정 의도만 쓰고, 처리 규칙은 Logic map, 화면과 API 대응은 Spec map 문서로 남김\n  - 모든 MR에 수정 전 실패·수정 후 통과하는 회귀 E2E 기록이 있어야 MR이 만들어지게 해 회귀를 테스트로 막음"
+          }
+        },
+        {
+          "id": "b_b8a04f609e",
+          "type": "freeText",
+          "data": {
+            "text": "**검증 환경**\n- **mock DB 회귀 E2E**\n  - 화면 하나를 확인하려 해도 Java 서버까지 띄워야 했음\n  - 실제 DB 스키마를 본뜬 mock DB로 Java 서버 없이 브라우저 E2E를 돌리는 하네스를 만듦\n  - 최근 2년간 병합된 MR 250건을 모두 회귀 테스트로 덮음\n- **명령 하나로 로컬 풀스택**\n  - 라이선스와 인스턴스를 DB에 직접 넣던 기존 셋업은 서버 버전이 조금만 달라도 깨졌음\n  - 이 단계를 제품 UI 절차로 바꿈\n  - `pnpm run dev` 하나로 고객사 배포본 기준 8개 버전 조합을 띄우고 8개 시나리오를 모두 통과"
+          }
+        }
+      ]
+    },
+    {
+      "id": "p_b1e1fec499",
+      "blocks": [
+        {
+          "id": "b_f9fd8b561b",
           "type": "careerProject",
           "data": {
             "title": "사내 AI 도구",
@@ -239,7 +258,7 @@
           }
         },
         {
-          "id": "b_b8a04f609e",
+          "id": "b_f2dafdb82a",
           "type": "freeText",
           "data": {
             "text": "- **사내 검색 exemos**\n  - 이슈·MR·문서·매뉴얼을 한 번에 찾는 검색 API에서 검색 경로와 운영 배포를 맡음\n  - QA팀이 고객 지원에 쓰는 등 사내에서 널리 씀\n- **GitLab 슬래시 커맨드**\n  - AI를 쓰려면 개인 PC로 맥락을 옮겨야 했고, 결과를 팀이 함께 보기 어려웠음\n  - MR·이슈 스레드 댓글에서 바로 AI를 부르는 봇을 만듦\n  - 운영 오류는 Sentry로, 추론 과정은 Langfuse로 나눠 추적\n  - 스레드 안에서 AI 결과를 함께 검증하고 리뷰하게 됨\n- **Design Studio**\n  - 기획자가 실제 제품 코드 위에서 화면을 만들고 명세를 쓰는 워크스페이스를 만듦\n  - 지금도 기획팀이 프로토타이핑에 씀"
@@ -271,7 +290,7 @@
           "type": "sectionHeader",
           "data": {
             "title": "최근 글",
-            "meta": "gihwan-dev.tistory.com · 최신 글 5개 · 2026.10.18 확인",
+            "meta": "gihwan-dev.tistory.com · 개발 분류 최신 5개 · 2026.10.18 확인",
             "variant": "secondary"
           }
         },
@@ -281,29 +300,29 @@
           "data": {
             "items": [
               {
-                "href": "https://gihwan-dev.tistory.com/entry/%EC%9E%90%EB%B3%B8%EC%A3%BC%EC%9D%98-1%EB%B6%80-%EB%8F%88%EC%9D%80-%EB%B9%9A%EC%9D%B4%EB%8B%A4",
-                "title": "자본주의 1부 - 돈은 빚이다",
-                "note": "2026-09-20"
-              },
-              {
-                "href": "https://gihwan-dev.tistory.com/entry/%EC%A7%80%EA%B8%88-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C%EA%B0%80-%EB%8D%94%EB%8D%94%EC%9A%B1-%EC%A4%91%EC%9A%94%ED%95%9C-%EC%9D%B4%EC%9C%A0",
                 "title": "지금 테스트 코드가 더더욱 중요한 이유",
+                "href": "https://gihwan-dev.tistory.com/entry/%EC%A7%80%EA%B8%88-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C%EA%B0%80-%EB%8D%94%EB%8D%94%EC%9A%B1-%EC%A4%91%EC%9A%94%ED%95%9C-%EC%9D%B4%EC%9C%A0",
                 "note": "2026-09-06"
               },
               {
-                "href": "https://gihwan-dev.tistory.com/entry/%EC%8A%A4%ED%8B%B1-%ED%9B%84%EA%B8%B0",
-                "title": "스틱 후기",
-                "note": "2026-08-29"
-              },
-              {
-                "href": "https://gihwan-dev.tistory.com/entry/Tanstack-Table-V9-%EB%A7%88%EC%9D%B4%EA%B7%B8%EB%A0%88%EC%9D%B4%EC%85%98-%ED%9A%8C%EA%B3%A0",
                 "title": "Tanstack Table V9 마이그레이션 회고",
+                "href": "https://gihwan-dev.tistory.com/entry/Tanstack-Table-V9-%EB%A7%88%EC%9D%B4%EA%B7%B8%EB%A0%88%EC%9D%B4%EC%85%98-%ED%9A%8C%EA%B3%A0",
                 "note": "2026-08-26"
               },
               {
-                "href": "https://gihwan-dev.tistory.com/entry/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%EC%82%B4%EC%95%84%EB%82%A8%EA%B8%B0-%EC%84%B1%EC%9E%A5%EC%97%90-%EB%8C%80%ED%95%9C-%EA%B3%A0%EB%AF%BC",
                 "title": "개발자로 살아남기 - 성장에 대한 고민",
+                "href": "https://gihwan-dev.tistory.com/entry/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%EC%82%B4%EC%95%84%EB%82%A8%EA%B8%B0-%EC%84%B1%EC%9E%A5%EC%97%90-%EB%8C%80%ED%95%9C-%EA%B3%A0%EB%AF%BC",
                 "note": "2026-08-09"
+              },
+              {
+                "title": "리액트로 바라보는 정책과 메커니즘의 분리",
+                "href": "https://gihwan-dev.tistory.com/entry/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A1%9C-%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%A0%95%EC%B1%85%EA%B3%BC-%EB%A9%94%EC%BB%A4%EB%8B%88%EC%A6%98%EC%9D%98-%EB%B6%84%EB%A6%AC",
+                "note": "2026-07-19"
+              },
+              {
+                "title": "Zustand 스토어를 지역화하기",
+                "href": "https://gihwan-dev.tistory.com/entry/Zustand-%EC%8A%A4%ED%86%A0%EC%96%B4%EB%A5%BC-%EC%A7%80%EC%97%AD%ED%99%94%ED%95%98%EA%B8%B0",
+                "note": "2026-07-19"
               }
             ]
           }

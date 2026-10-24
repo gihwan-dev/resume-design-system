@@ -31,14 +31,26 @@ test('published resume is read-only and preserves mobile readability without ini
 test('published resume fits within A4 print padding and keeps two-level bullets', async ({
   page,
 }) => {
-  await page.route('https://**/*', (route) => route.abort());
+  // Print geometry must use the shipped fonts, not OS-specific fallback metrics.
+  const fontHosts = new Set(['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com']);
+  await page.route('https://**/*', (route) =>
+    fontHosts.has(new URL(route.request().url()).hostname) ? route.continue() : route.abort(),
+  );
   await page.goto('/resume/tossplace-platform');
   await expect(page.locator('.rs-name')).toHaveText('최기환');
   await page.emulateMedia({ media: 'print' });
-  await page.evaluate(async () => {
+  const loadedFonts = await page.evaluate(async () => {
     document.body.dataset.preview = 'print';
+    const fonts = await Promise.all(
+      [400, 600, 700].map((weight) => document.fonts.load(`${weight} 13.5px Pretendard`, '한글')),
+    );
     await document.fonts.ready;
+    return fonts.map((faces) => faces.length);
   });
+  expect(
+    loadedFonts.every((count) => count > 0),
+    'Print fonts must be loaded',
+  ).toBe(true);
   await expect(page.locator('.rs-tree--d2')).toHaveCount(0);
   const printPages = await page.locator('.rs-page').evaluateAll((pages) =>
     pages.map((element) => {

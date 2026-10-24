@@ -9,7 +9,8 @@ test('published resume is read-only and preserves mobile readability without ini
   const page = await context.newPage();
   await page.goto('/resume/tossplace-platform');
   await expect(page.locator('.rs-name')).toHaveText('최기환');
-  await expect(page.locator('.rs-page')).toHaveCount(5);
+  const document = await (await page.request.get('/resumes/tossplace-platform.json')).json();
+  await expect(page.locator('.rs-page')).toHaveCount(document.pages.length);
   await expect(page.locator('.rs-blog-row')).toHaveCount(5);
   await expect(
     page.locator('.panel-left,.panel-right,textarea,[contenteditable="true"]'),
@@ -25,6 +26,55 @@ test('published resume is read-only and preserves mobile readability without ini
   expect(pdf.ok()).toBe(true);
   expect((await pdf.body()).subarray(0, 5).toString()).toBe('%PDF-');
   await context.close();
+});
+
+test('published resume fits within A4 print padding and keeps two-level bullets', async ({
+  page,
+}) => {
+  await page.route('https://**/*', (route) => route.abort());
+  await page.goto('/resume/tossplace-platform');
+  await expect(page.locator('.rs-name')).toHaveText('최기환');
+  await page.emulateMedia({ media: 'print' });
+  await page.evaluate(async () => {
+    document.body.dataset.preview = 'print';
+    await document.fonts.ready;
+  });
+  await expect(page.locator('.rs-tree--d2')).toHaveCount(0);
+  const printPages = await page.locator('.rs-page').evaluateAll((pages) =>
+    pages.map((element) => {
+      const page = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const bounds = {
+        top: page.top + parseFloat(style.paddingTop),
+        bottom: page.bottom - parseFloat(style.paddingBottom),
+        left: page.left + parseFloat(style.paddingLeft),
+        right: page.right - parseFloat(style.paddingRight),
+      };
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      const overflows: string[] = [];
+      while (walker.nextNode()) {
+        if (!walker.currentNode.textContent?.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(walker.currentNode);
+        for (const rect of range.getClientRects()) {
+          if (
+            rect.width > 0 &&
+            (rect.top < bounds.top - 1 ||
+              rect.bottom > bounds.bottom + 1 ||
+              rect.left < bounds.left - 1 ||
+              rect.right > bounds.right + 1)
+          ) {
+            overflows.push(walker.currentNode.textContent.trim());
+          }
+        }
+      }
+      return { text: element.textContent, overflows };
+    }),
+  );
+  for (const [index, page] of printPages.entries()) {
+    expect(page.overflows, `Print overflow on page ${index + 1}`).toEqual([]);
+    expect(page.text).not.toMatch(/[·—]/u);
+  }
 });
 
 test('published resume reports unavailable or malformed documents without mounting the editor', async ({

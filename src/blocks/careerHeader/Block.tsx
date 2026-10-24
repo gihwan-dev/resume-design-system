@@ -8,7 +8,7 @@ export function CareerHeaderBlock({ data }: { data: CareerHeaderData }) {
       <div className="rs-career-top">
         <div className="rs-career-title">
           <span className="rs-career-company">{company}</span>
-          {role && <span className="rs-career-sep">·</span>}
+          {role && <span className="rs-career-sep">/</span>}
           {role && <span className="rs-career-role">{role}</span>}
         </div>
         {period && <div className="rs-section-meta rs-career-period">{period}</div>}

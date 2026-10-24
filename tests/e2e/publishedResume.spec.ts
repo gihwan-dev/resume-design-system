@@ -83,8 +83,11 @@ test('published resume fits within A4 print padding and keeps two-level bullets'
       return { text: element.textContent, overflows };
     }),
   );
-  for (const [index, page] of printPages.entries()) {
-    expect(page.overflows, `Print overflow on page ${index + 1}`).toEqual([]);
+  const overflows = printPages.flatMap((page, index) =>
+    page.overflows.map((text) => ({ page: index + 1, text })),
+  );
+  expect(overflows, 'Text must fit inside every printed page').toEqual([]);
+  for (const page of printPages) {
     expect(page.text).not.toMatch(/[·—]/u);
   }
 });

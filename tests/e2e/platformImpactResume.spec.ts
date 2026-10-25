@@ -30,7 +30,7 @@ test('separate platform-impact route has its own document and PDF without initia
 
 test('separate platform-impact resume fits within A4 print padding and keeps two-level bullets', async ({
   page,
-}) => {
+}, testInfo) => {
   // Print geometry must use the shipped fonts, not OS-specific fallback metrics.
   const fontHosts = new Set(['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com']);
   await page.route('https://**/*', (route) =>
@@ -86,5 +86,25 @@ test('separate platform-impact resume fits within A4 print padding and keeps two
   const overflows = printPages.flatMap((page, index) =>
     page.overflows.map((text) => ({ page: index + 1, text })),
   );
+  await page.pdf({
+    path: testInfo.outputPath('tossplace-platform-impact.pdf'),
+    format: 'A4',
+    printBackground: true,
+    preferCSSPageSize: true,
+  });
+  for (let index = 0; index < printPages.length; index += 1) {
+    await page
+      .locator('.rs-page')
+      .nth(index)
+      .screenshot({
+        path: testInfo.outputPath(`print-page-${index + 1}.png`),
+      });
+  }
+  await page.emulateMedia({ media: 'screen' });
+  await page.evaluate(() => {
+    delete document.body.dataset.preview;
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: testInfo.outputPath('mobile.png'), fullPage: true });
   expect(overflows, 'Text must fit inside every printed page').toEqual([]);
 });

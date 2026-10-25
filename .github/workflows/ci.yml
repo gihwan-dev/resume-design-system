@@ -80,3 +80,14 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 7
+
+      - name: Upload resume print QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-impact-print-qa
+          path: |
+            test-results/**/tossplace-platform-impact.pdf
+            test-results/**/print-page-*.png
+            test-results/**/mobile.png
+          retention-days: 7

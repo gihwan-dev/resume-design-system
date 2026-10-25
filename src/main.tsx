@@ -9,10 +9,22 @@ const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root not found');
 
 const shareToken = parseShareHash(window.location.hash);
-const published = /^\/resume\/tossplace-platform\/?$/.test(window.location.pathname);
+const publishedSlug = /^\/resume\/(tossplace-platform(?:-impact)?)\/?$/.exec(
+  window.location.pathname,
+)?.[1];
 
 createRoot(rootEl).render(
   <StrictMode>
-    {published ? <PublishedResumeView /> : shareToken ? <ShareView token={shareToken} /> : <App />}
+    {publishedSlug ? (
+      <PublishedResumeView
+        key={publishedSlug}
+        slug={publishedSlug}
+        label={publishedSlug.endsWith('-impact') ? 'Platform용 개선 버전' : 'Platform용 첫 버전'}
+      />
+    ) : shareToken ? (
+      <ShareView token={shareToken} />
+    ) : (
+      <App />
+    )}
   </StrictMode>,
 );

@@ -6,12 +6,23 @@ import { ThemeProvider } from '../theme/ThemeProvider';
 import '../blocks';
 
 // A public document never mounts App/useBootstrap or writes to the editor's store.
-export function PublishedResumeView() {
-  const [data, setData] = useState<ResumeExportV1 | null>(null);
-  const [error, setError] = useState(false);
+export function PublishedResumeView({
+  slug = 'tossplace-platform',
+  label = 'Platform용 첫 버전',
+}: {
+  slug?: string;
+  label?: string;
+}) {
+  const [result, setResult] = useState<{
+    slug: string;
+    data: ResumeExportV1 | null;
+    error: boolean;
+  } | null>(null);
+  const data = result?.slug === slug ? result.data : null;
+  const error = result?.slug === slug && result.error;
   useEffect(() => {
     const controller = new AbortController();
-    fetch('/resumes/tossplace-platform.json', { signal: controller.signal })
+    fetch(`/resumes/${slug}.json`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error('Document unavailable');
         return response.json() as Promise<unknown>;
@@ -19,14 +30,15 @@ export function PublishedResumeView() {
       .then((raw) => {
         const parsed = deserializeResumeExport(raw);
         if (!parsed.ok) throw new Error(parsed.error);
-        setData(parsed.data);
+        if (controller.signal.aborted) return;
+        setResult({ slug, data: parsed.data, error: false });
         document.title = '최기환 | Frontend Engineer';
       })
       .catch(() => {
-        if (!controller.signal.aborted) setError(true);
+        if (!controller.signal.aborted) setResult({ slug, data: null, error: true });
       });
     return () => controller.abort();
-  }, []);
+  }, [slug]);
 
   return (
     <ThemeProvider themeName={data?.theme ?? 'default'}>
@@ -35,9 +47,9 @@ export function PublishedResumeView() {
         <header className="published-nav" data-print="hide">
           <div>
             <strong>최기환</strong>
-            <span>Platform용 첫 버전</span>
+            <span>{label}</span>
           </div>
-          <a href="/resumes/tossplace-platform.pdf">PDF 보기</a>
+          <a href={`/resumes/${slug}.pdf`}>PDF 보기</a>
         </header>
         {data ? (
           <ReadOnlyCanvas pages={data.pages} />

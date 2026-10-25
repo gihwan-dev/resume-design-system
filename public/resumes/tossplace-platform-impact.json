@@ -1,0 +1,276 @@
+{
+  "v": 1,
+  "name": "최기환: 프론트엔드 플랫폼 개선 버전",
+  "theme": "default",
+  "pages": [
+    {
+      "id": "impact_p_1",
+      "blocks": [
+        {
+          "id": "impact_b_001",
+          "type": "header",
+          "data": {
+            "name": "최기환",
+            "role": "Frontend Engineer",
+            "tagline": "",
+            "contacts": [
+              "rlghks3004@gmail.com",
+              "https://github.com/gihwan-dev",
+              "https://gihwan-dev.tistory.com/"
+            ]
+          }
+        },
+        {
+          "id": "impact_b_002",
+          "type": "positioning",
+          "data": {
+            "text": "사내 5개 제품이 사용하는 React 그리드와 MaxGauge 제품군을 담당하는 프론트엔드 개발자입니다. 차세대 MaxGauge의 22개 화면을 공통 그리드 구조로 전환하고, 브라우저 인수 테스트를 바탕으로 내부 구조와 성능을 개선했습니다. 공통 라이브러리부터 CI와 AI 작업 도구까지, 여러 제품에서 반복되는 개발·검증 작업을 줄이는 데 집중하고 있습니다."
+          }
+        },
+        {
+          "id": "impact_b_003",
+          "type": "sectionHeader",
+          "data": {
+            "title": "경력",
+            "meta": "",
+            "variant": "primary"
+          }
+        },
+        {
+          "id": "impact_b_004",
+          "type": "careerHeader",
+          "data": {
+            "company": "주식회사엑셈",
+            "role": "프론트엔드 개발자",
+            "period": "2024.11 - 현재",
+            "summary": "통합 모니터링 대시보드의 기획·디자인·개발을 맡았으며, 현재 대시보드와 MaxGauge 레거시 제품군, 사내 React 그리드를 담당합니다. 차세대 MaxGauge의 화면 개발과 공통 구조 개선에도 참여하고 있습니다."
+          }
+        },
+        {
+          "id": "impact_b_005",
+          "type": "careerProject",
+          "data": {
+            "title": "사내 5개 제품이 사용하는 React 그리드 개선",
+            "period": "2025.06경부터 담당",
+            "stack": "React / TypeScript / TanStack Table / Vitest"
+          }
+        },
+        {
+          "id": "impact_b_006",
+          "type": "freeText",
+          "data": {
+            "text": "기존 컴포넌트의 유지보수를 넘겨받아 API와 렌더링 구조를 재설계했습니다. 제품마다 다른 요구를 수용하면서도 공통 기능을 한곳에서 개선할 수 있도록 책임을 나누고, 브라우저 인수 테스트를 바탕으로 내부 구조를 변경했습니다."
+          }
+        },
+        {
+          "id": "impact_b_007",
+          "type": "freeText",
+          "data": {
+            "text": "**제품별 요구와 공통 기능을 분리하고, 차세대 22개 화면 전환**\n- 정렬·선택·가상화는 라이브러리가, 필터 동작·툴바·푸터·DB 지표별 셀 표현은 제품이 담당하도록 경계를 정했습니다. 제품 요구가 추가될 때 공통 라이브러리에 제품 전용 분기를 넣지 않도록 했습니다.\n- 이 구조에 맞춰 차세대 MaxGauge의 22개 화면을 직접 전환하고, 제품 안에서 반복되는 규칙은 공통 컴포넌트로 묶었습니다.\n- 259개 컬럼 정의를 한곳에 모았습니다. 같은 DB 지표의 이름이나 타입이 바뀌면 화면마다 정의를 찾아 수정하지 않아도 되도록 했습니다."
+          }
+        },
+        {
+          "id": "impact_b_008",
+          "type": "freeText",
+          "data": {
+            "text": "**검색 시 누적 React 렌더 시간 1,927ms에서 61ms로 단축**\n- 상태 하나가 바뀌어도 테이블 전체가 렌더링에 참여하고 비교 함수가 복잡해지는 문제를 확인했습니다. TanStack Table v9의 상태 구독 구조를 활용해 각 컴포넌트가 필요한 상태만 구독하도록 바꿨습니다.\n- TanStack 의존 코드를 별도 모듈로 모아 기능별로 전환하고, v9과 중복되는 상태 관리 계층을 제거했습니다. Vitest Browser Mode의 인수 테스트로 정렬·검색·선택·리사이즈의 기존 동작을 확인했습니다.\n- 10,000행·8개 컬럼에서 14자 검색어를 입력할 때 누적 React 렌더 시간이 **1,927ms → 61ms**로 줄었습니다. 같은 브라우저·데이터·조작 조건에서 5회 측정한 중앙값입니다."
+          }
+        },
+        {
+          "id": "impact_b_009",
+          "type": "freeText",
+          "data": {
+            "text": "**API와 렌더링 경로를 정리해 유지보수 범위 축소**\n- 기능별로 흩어진 옵션과 콜백을 모으고 제어·비제어 방식으로 API를 통일했습니다. 화면과 라이브러리 중 상태의 소유자를 명확히 해 중간 복제 상태와 동기화용 useEffect를 제거했습니다.\n- 컬럼 리사이즈·이동·가상화를 직접 제어할 수 있도록 table 태그에서 div 기반으로 전환했습니다.\n- 일반 렌더링과 가상화에서 같은 기능을 각각 구현·검증하는 비용이 더 크다고 판단해 가상화를 기본 동작으로 정했습니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "impact_p_2",
+      "blocks": [
+        {
+          "id": "impact_b_010",
+          "type": "careerProject",
+          "data": {
+            "title": "반복되는 개발·검증 작업을 도구와 절차로 정리",
+            "period": "2026.09부터 전담",
+            "stack": "MaxGauge 레거시 / JavaScript / ExtJS / Playwright / Claude Code / Codex"
+          }
+        },
+        {
+          "id": "impact_b_011",
+          "type": "freeText",
+          "data": {
+            "text": "MFO·MFT·MFA·MFD·MFS의 프론트엔드를 맡아 고객 요청 분석부터 재현·구현·검증·패키징까지 담당합니다. 다른 화면이나 고객사 기능에 미치는 영향을 확인할 수 있도록 실행 환경과 검증 절차를 함께 개선했습니다."
+          }
+        },
+        {
+          "id": "impact_b_012",
+          "type": "freeText",
+          "data": {
+            "text": "**레거시 수정에 필요한 환경 준비부터 검증·리뷰까지 AI 작업 흐름 구성**\n- 복잡한 로컬 환경 구성을 도구화하고, 실제 환경과 유사한 실행 환경에서 AI가 브라우저를 조작해 결과를 검증하도록 했습니다.\n- 과거 MR에서 반복된 실수를 조사해 리뷰 스킬에 반영했습니다. 복제된 코드의 수정 누락과 비동기 응답 순서 문제처럼 레거시에서 놓치기 쉬운 항목을 점검하도록 했습니다.\n- 테스트와 AI 리뷰를 거친 결과를 시나리오별 화면으로 남기도록 했습니다. 코드 확인과 수동 재현에 의존하던 검토에 화면 증거를 더해 의도한 동작을 확인하며 병합할 수 있도록 했습니다."
+          }
+        },
+        {
+          "id": "impact_b_013",
+          "type": "freeText",
+          "data": {
+            "text": "**사용자 매뉴얼과 실제 버그 수정 이력으로 인수 테스트 구축**\n- MFO 사용자 매뉴얼에서 사용자의 작업과 기대 결과를 추출해 인수 테스트를 작성했습니다.\n- 최근 2년간 병합된 버그 수정 MR을 바탕으로 수정 전에는 실패하고 수정 후에는 통과하는지 확인했습니다. 테스트가 실제 결함을 잡는지 검증하며 기능 변경의 안전망으로 사용하고 있습니다.\n- 테스트 작성 중 발견한 기존 결함은 후속 릴리스에서 수정할 수 있도록 별도로 기록했습니다."
+          }
+        },
+        {
+          "id": "impact_b_014",
+          "type": "freeText",
+          "data": {
+            "text": "**버전에서 소스와 변경 내역을 추적할 수 있도록 릴리스 기준 정리**\n- 제품 버전·빌드 날짜·고객사 변경이 혼재해 패키지에 포함된 소스와 작업을 파악하기 어려웠습니다. 기준 버전·고객사 식별·수정 순번의 의미를 정리하고 버전 부여 규칙을 명확히 했습니다.\n- 확정한 버전에 작업 목록과 Client·SQL 소스 커밋을 연결해 패키지의 근거를 추적할 수 있도록 했습니다.\n- trunk·지원 버전별 릴리스·고객사별 유지보수 브랜치의 역할과 핫픽스 전파 규칙을 정했습니다. 현재 기존 브랜치를 이 체계로 전환하고 있습니다."
+          }
+        },
+        {
+          "id": "impact_b_015",
+          "type": "spacer",
+          "data": {
+            "height": 8
+          }
+        },
+        {
+          "id": "impact_b_016",
+          "type": "careerProject",
+          "data": {
+            "title": "CI 파이프라인 중앙값 198초에서 94초로 단축",
+            "period": "",
+            "stack": "MaxGauge 차세대 / React / TypeScript"
+          }
+        },
+        {
+          "id": "impact_b_017",
+          "type": "freeText",
+          "data": {
+            "text": "- CI가 느려졌지만 큐 대기 중앙값은 1.6초였습니다. 러너를 늘리기보다 실행 단계에서 시간이 쓰이는 곳을 분석했습니다.\n- Storybook을 미리 빌드한 파일로 제공하고, DOM이 필요 없는 테스트는 Node 환경으로 옮겼습니다. 중복 분석과 리포트 생성도 줄였습니다.\n- 파이프라인 시간 중앙값이 **198초 → 94초**로 줄었습니다. 변경 전 20회·후 4회 기록을 비교했으며, 재시도와 캐시 재생성은 제외했습니다."
+          }
+        }
+      ]
+    },
+    {
+      "id": "impact_p_3",
+      "blocks": [
+        {
+          "id": "impact_b_018",
+          "type": "careerProject",
+          "data": {
+            "title": "고객사별 구현을 공통 제품으로 통합",
+            "period": "입사 초기부터 담당",
+            "stack": "MaxGauge Dashboard / Vue → React / TypeScript"
+          }
+        },
+        {
+          "id": "impact_b_019",
+          "type": "freeText",
+          "data": {
+            "text": "여러 DB 인스턴스의 상태와 알람을 한 화면에서 확인하는 제품입니다. 별도 기획자·디자이너 없이 고객 요구사항을 받아 기획·디자인·개발을 맡았으며, 현재 고객사에서 운영 중입니다."
+          }
+        },
+        {
+          "id": "impact_b_020",
+          "type": "freeText",
+          "data": {
+            "text": "- 고객사별 브랜치에서 기능을 개발해 공통 버그 수정도 여러 브랜치에 반복 전파해야 했습니다. 고객 요청을 공통 제품의 기능으로 만들고 설정으로 활성화하도록 바꿔 같은 코드에서 고객사별 기능을 제공했습니다.\n- 사내 디자인 시스템을 활용하기 위해 React로 전환했습니다. 공통 컴포넌트·디자인 토큰·테마를 적용해 새 화면에도 같은 디자인 기준을 사용할 수 있도록 했습니다.\n- TypeScript와 사용자 조작 기반 테스트를 도입해 타입 오류와 검증 대상 기능의 회귀를 배포 전에 확인하도록 했습니다."
+          }
+        },
+        {
+          "id": "impact_b_021",
+          "type": "spacer",
+          "data": {
+            "height": 4
+          }
+        },
+        {
+          "id": "impact_b_022",
+          "type": "careerProject",
+          "data": {
+            "title": "화면 확장과 데이터 탐색 경험 개선",
+            "period": "",
+            "stack": "MaxGauge 차세대 / React / TypeScript / TanStack Query / ECharts"
+          }
+        },
+        {
+          "id": "impact_b_023",
+          "type": "freeText",
+          "data": {
+            "text": "- **위젯 빌더 확장 구조:** 데이터 준비와 화면 표시를 분리하고, 시각화별 설정 폼·검증 규칙·미리보기를 플러그인으로 묶었습니다. 새 차트나 테이블의 관련 코드를 해당 플러그인 안에서 함께 관리하도록 했습니다.\n- **선택한 SQL 우선 조회:** 목록 앞부분을 모두 받은 뒤 선택한 SQL을 보여주던 흐름을 바꿨습니다. 해당 SQL이 있는 페이지를 먼저 받고 앞뒤 데이터는 스크롤할 때 조회하며, 추가 조회 중에도 기존 행의 선택과 스크롤을 유지했습니다."
+          }
+        },
+        {
+          "id": "impact_b_024",
+          "type": "sectionHeader",
+          "data": {
+            "title": "개발 도구 실험",
+            "meta": "",
+            "variant": "primary"
+          }
+        },
+        {
+          "id": "impact_b_025",
+          "type": "freeText",
+          "data": {
+            "text": "**Task Analyzer · Python / TypeScript / MCP**\n요구사항·관련 코드·과거 작업 이력의 관계와 검색 기능을 별도 서버로 분리했습니다. MCP와 스킬에서 같은 검색 기능을 사용하도록 규격을 정하고 사내 플러그인 마켓에 구성했습니다. 회의록에 관련 태스크를 연결하거나 개발 중 작업 맥락을 찾는 데 사용하고 있습니다."
+          }
+        },
+        {
+          "id": "impact_b_026",
+          "type": "freeText",
+          "data": {
+            "text": "**GitLab 슬래시 커맨드 · TypeScript / LangGraph**\nMR 댓글에서 AI를 호출하고 답변·수정 결과를 같은 스레드에서 검토하도록 했습니다. 개인 PC로 작업 맥락을 옮겨 설명하는 과정을 줄이고, 스레드별로 이력을 분리해 함께 작업하는 사람이 같은 맥락에서 결과를 확인하도록 했습니다."
+          }
+        },
+        {
+          "id": "impact_b_027",
+          "type": "sectionHeader",
+          "data": {
+            "title": "학력",
+            "meta": "",
+            "variant": "primary"
+          }
+        },
+        {
+          "id": "impact_b_028",
+          "type": "education",
+          "data": {
+            "rows": [
+              {
+                "key": "동의대학교",
+                "val": "정보통신공학과 / 응용 소프트웨어 공학 부전공 | 2017.03 - 2024.03"
+              }
+            ]
+          }
+        },
+        {
+          "id": "impact_b_029",
+          "type": "sectionHeader",
+          "data": {
+            "title": "관련 글",
+            "meta": "",
+            "variant": "primary"
+          }
+        },
+        {
+          "id": "impact_b_030",
+          "type": "blogPosts",
+          "data": {
+            "items": [
+              {
+                "title": "지금 테스트 코드가 더더욱 중요한 이유",
+                "href": "https://gihwan-dev.tistory.com/entry/%EC%A7%80%EA%B8%88-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C%EA%B0%80-%EB%8D%94%EB%8D%94%EC%9A%B1-%EC%A4%91%EC%9A%94%ED%95%9C-%EC%9D%B4%EC%9C%A0",
+                "note": "2026.09.06"
+              },
+              {
+                "title": "Tanstack Table V9 마이그레이션 회고",
+                "href": "https://gihwan-dev.tistory.com/entry/Tanstack-Table-V9-%EB%A7%88%EC%9D%B4%EA%B7%B8%EB%A0%88%EC%9D%B4%EC%85%98-%ED%9A%8C%EA%B3%A0",
+                "note": "2026.08.26"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
